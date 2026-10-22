@@ -43,9 +43,6 @@ export function DestinationGuide() {
           Visit hotel booking page
         </Link>
       </Section>
-      <Section title="Emergency Contact">
-        <p>{guide.emergencyContact}</p>
-      </Section>
 
       <ScrollReveal className="mt-10">
         <h2 className="display mb-4 text-3xl text-charcoal">Frequently Asked</h2>

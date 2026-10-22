@@ -469,7 +469,7 @@ export const wedding = {
     {
       id: "gifts",
       title: "Gifts",
-      body: "Your presence is the greatest gift. If you wish to honor us further, a contribution toward our honeymoon adventures is warmly appreciated.",
+      body: "Here are a few items we would love. Claim an item so we know it is covered—or, if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -482,6 +482,11 @@ export const wedding = {
       id: "contact",
       title: "Contact Person",
       body: "For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com. Please mention Shenice & Quinton’s wedding (May 12, 2027) so she knows which celebration you’re writing about.",
+    },
+    {
+      id: "emergency-contact",
+      title: "Emergency Contact",
+      body: "The resort has a nurse on premises.",
     },
   ] as Reminder[],
 
@@ -536,8 +541,7 @@ export const wedding = {
     hotel:
       "Coconut Bay Beach Resort & Spa is our recommended stay for the wedding weekend—close to ceremony and reception settings, with beach access and guest services on site. Splash is family-friendly. Harmony is adults-only (18+). Serenity at Coconut Bay is a couples-only option on the same property: private plunge-pool suites, with full use of the resort.",
     bookingInstructions:
-      "Book directly with Coconut Bay by January 31, 2027 and mention Shenice & Quinton’s wedding (May 12, 2027). Suggested stay window: May 10–15, 2027. Email reservations@cbayresort.com, call 877-252-0304 (North America) or 758-459-6000, or visit www.cbayresort.com. Confirm rates and cancellation terms with the resort.",
-    emergencyContact: "The resort has a nurse on premises.",
+      "Book directly with Coconut Bay by January 31, 2027 and mention Shenice & Quinton’s wedding (May 12, 2027). Email reservations@cbayresort.com, call 877-252-0304 (North America) or 758-459-6000, or visit www.cbayresort.com. Confirm rates and cancellation terms with the resort.",
   },
 
   faqs: [
@@ -585,7 +589,7 @@ export const wedding = {
     {
       question: "What about gifts?",
       answer:
-        "Your presence is the greatest gift. If you wish to honor us further, a contribution toward our honeymoon adventures is warmly appreciated.",
+        "Here are a few items we would love. Claim an item so we know it is covered—or, if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -593,6 +597,10 @@ export const wedding = {
       question: "Who do I contact with travel questions?",
       answer:
         "For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com and mention Shenice & Quinton’s wedding (May 12, 2027). For room reservations, email reservations@cbayresort.com, call 877-252-0304, or visit www.cbayresort.com.",
+    },
+    {
+      question: "Is there medical help at the resort?",
+      answer: "The resort has a nurse on premises.",
     },
   ] as FaqItem[],
 
