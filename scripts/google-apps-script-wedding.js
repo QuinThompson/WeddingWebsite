@@ -38,11 +38,7 @@ var RSVP_HEADERS = [
   "Attending",
   "Guest Count",
   "Guest Names",
-  "Meal Preference",
-  "Dietary Restrictions",
   "Hotel Status",
-  "Flight Info",
-  "Song Request",
   "Message",
   "Adult Count",
   "Child Count",
@@ -113,7 +109,7 @@ function doGet(e) {
 
 function handleRsvp_(data) {
   var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
-  ensureHeaders_(sheet, RSVP_HEADERS);
+  alignRsvpColumns_(sheet);
   sheet.appendRow([
     data.submittedAt || new Date().toISOString(),
     data.id || "",
@@ -123,11 +119,7 @@ function handleRsvp_(data) {
     data.attending || "",
     data.guestCount || "",
     data.guestNames || "",
-    data.mealPreference || "",
-    data.dietaryRestrictions || "",
     data.hotelStatus || "",
-    data.flightInfo || "",
-    data.songRequest || "",
     data.message || "",
     data.adultCount || "",
     data.childCount || "",
@@ -364,6 +356,85 @@ function getOrCreateSheet_(name, headers) {
     sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
   }
   return sheet;
+}
+
+/**
+ * Older RSVP sheets are missing the Mobile header, so the phone number sits
+ * under Attending and every column after Email is shifted right by one.
+ * This restores that label, then drops the meal, diet, flight, and song columns.
+ */
+var RSVP_HEADERS_MISSING_MOBILE = [
+  "Submitted At",
+  "ID",
+  "Full Name",
+  "Email",
+  "Attending",
+  "Guest Count",
+  "Guest Names",
+  "Meal Preference",
+  "Dietary Restrictions",
+  "Hotel Status",
+  "Flight Info",
+  "Song Request",
+  "Message",
+  "Adult Count",
+  "Child Count",
+  "Adults Detail",
+  "Children Detail",
+];
+
+var RSVP_HEADERS_WITH_EXTRAS = [
+  "Submitted At",
+  "ID",
+  "Full Name",
+  "Email",
+  "Mobile",
+  "Attending",
+  "Guest Count",
+  "Guest Names",
+  "Meal Preference",
+  "Dietary Restrictions",
+  "Hotel Status",
+  "Flight Info",
+  "Song Request",
+  "Message",
+  "Adult Count",
+  "Child Count",
+  "Adults Detail",
+  "Children Detail",
+];
+
+function headersMatch_(current, expected) {
+  if (current.length < expected.length) return false;
+  for (var i = 0; i < expected.length; i++) {
+    if (String(current[i] || "") !== expected[i]) return false;
+  }
+  return true;
+}
+
+function alignRsvpColumns_(sheet) {
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var current = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  if (headersMatch_(current, RSVP_HEADERS)) {
+    ensureHeaders_(sheet, RSVP_HEADERS);
+    return;
+  }
+
+  if (headersMatch_(current, RSVP_HEADERS_MISSING_MOBILE)) {
+    sheet.getRange(1, 1, 1, RSVP_HEADERS_WITH_EXTRAS.length).setValues([RSVP_HEADERS_WITH_EXTRAS]);
+    current = RSVP_HEADERS_WITH_EXTRAS.slice();
+  }
+
+  if (headersMatch_(current, RSVP_HEADERS_WITH_EXTRAS)) {
+    // Delete from the right so the remaining indexes stay put.
+    sheet.deleteColumn(13); // Song Request
+    sheet.deleteColumn(12); // Flight Info
+    sheet.deleteColumn(10); // Dietary Restrictions
+    sheet.deleteColumn(9); // Meal Preference
+  }
+
+  ensureHeaders_(sheet, RSVP_HEADERS);
 }
 
 /** Extends row 1 when new columns are added (does not rewrite existing data). */

@@ -20,11 +20,7 @@ export type StoredRsvp = {
   attending: "yes" | "no";
   guestCount: string;
   guestNames: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
   hotelStatus: string;
-  flightInfo: string;
-  songRequest: string;
   message: string;
   adultCount?: string;
   childCount?: string;

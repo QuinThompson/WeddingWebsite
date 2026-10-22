@@ -17,11 +17,7 @@ type FormState = {
   email: string;
   mobile: string;
   attending: "yes" | "no" | "";
-  mealPreference: string;
-  dietaryRestrictions: string;
   hotelStatus: string;
-  flightInfo: string;
-  songRequest: string;
   message: string;
   adults: RsvpAdultGuest[];
   children: RsvpChildGuest[];
@@ -34,15 +30,11 @@ type FormErrors = Partial<Record<keyof FormState, string>> & {
 
 const emptyAdult = (): RsvpAdultGuest => ({
   name: "",
-  mealPreference: "",
-  dietaryRestrictions: "",
 });
 
 const emptyChild = (): RsvpChildGuest => ({
   name: "",
   age: "",
-  mealPreference: "Child meal",
-  dietaryRestrictions: "",
 });
 
 const initialState: FormState = {
@@ -50,11 +42,7 @@ const initialState: FormState = {
   email: "",
   mobile: "",
   attending: "",
-  mealPreference: "",
-  dietaryRestrictions: "",
   hotelStatus: "",
-  flightInfo: "",
-  songRequest: "",
   message: "",
   adults: [],
   children: [],
@@ -71,12 +59,11 @@ function validate(values: FormState): FormErrors {
   if (!values.attending) errors.attending = "Please tell us if you are attending.";
 
   if (values.attending === "yes") {
-    if (!values.mealPreference) errors.mealPreference = "Select your meal preference.";
     if (!values.hotelStatus) errors.hotelStatus = "Select your hotel status.";
 
     for (const adult of values.adults) {
-      if (!adult.name.trim() || !adult.mealPreference) {
-        errors.adults = "Each additional adult needs a name and meal preference.";
+      if (!adult.name.trim()) {
+        errors.adults = "Each additional adult needs a name.";
         break;
       }
     }
@@ -84,10 +71,6 @@ function validate(values: FormState): FormErrors {
       const ageNum = Number(child.age);
       if (!child.name.trim() || !child.age.trim() || Number.isNaN(ageNum) || ageNum < 0 || ageNum > 17) {
         errors.children = "Each child needs a name and age (0–17).";
-        break;
-      }
-      if (!child.mealPreference) {
-        errors.children = "Each child needs a meal preference.";
         break;
       }
     }
@@ -98,33 +81,24 @@ function validate(values: FormState): FormErrors {
 function toPayload(values: FormState): RsvpPayload {
   const adults =
     values.attending === "yes"
-      ? values.adults.map((a) => ({
-          name: a.name.trim(),
-          mealPreference: a.mealPreference,
-          dietaryRestrictions: a.dietaryRestrictions.trim(),
+      ? values.adults.map((adult) => ({
+          name: adult.name.trim(),
         }))
       : [];
   const children =
     values.attending === "yes"
-      ? values.children.map((c) => ({
-          name: c.name.trim(),
-          age: c.age.trim(),
-          mealPreference: c.mealPreference,
-          dietaryRestrictions: c.dietaryRestrictions.trim(),
+      ? values.children.map((child) => ({
+          name: child.name.trim(),
+          age: child.age.trim(),
         }))
       : [];
 
-  const mealPreference = values.attending === "yes" ? values.mealPreference : "";
-  const dietaryRestrictions =
-    values.attending === "yes" ? values.dietaryRestrictions.trim() : "";
   const fullName = values.fullName.trim();
 
   const party =
     values.attending === "yes"
       ? buildRsvpPartyFields({
           fullName,
-          mealPreference,
-          dietaryRestrictions,
           adults,
           children,
         })
@@ -142,11 +116,7 @@ function toPayload(values: FormState): RsvpPayload {
     email: values.email.trim(),
     mobile: values.mobile.trim(),
     attending: values.attending === "no" ? "no" : "yes",
-    mealPreference,
-    dietaryRestrictions,
     hotelStatus: values.attending === "yes" ? values.hotelStatus : "",
-    flightInfo: values.attending === "yes" ? values.flightInfo.trim() : "",
-    songRequest: values.attending === "yes" ? values.songRequest.trim() : "",
     message: values.message.trim(),
     adults,
     children,
@@ -177,40 +147,6 @@ function FieldError({ id, message }: { id: string; message?: string }) {
     <p id={id} className="mt-1 text-xs text-[#8a3f3f]" role="alert">
       {message}
     </p>
-  );
-}
-
-function MealSelect({
-  id,
-  value,
-  onChange,
-  error,
-  includeChildMeal = true,
-}: {
-  id: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
-  includeChildMeal?: boolean;
-}) {
-  const options = includeChildMeal
-    ? wedding.rsvp.mealOptions
-    : wedding.rsvp.mealOptions.filter((meal) => meal !== "Child meal");
-
-  return (
-    <select
-      id={id}
-      className={inputClass(error)}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">Select a meal</option>
-      {options.map((meal) => (
-        <option key={meal} value={meal}>
-          {meal}
-        </option>
-      ))}
-    </select>
   );
 }
 
@@ -270,7 +206,7 @@ export function RSVPForm() {
         <p className="pl-3 text-sm text-charcoal/75">
           Kindly reply by {wedding.deadlines.rsvpDisplay}. One person can RSVP for their whole
           invited party—including a spouse and children listed on your invitation—so we have
-          everyone’s names, meals, and ages.
+          everyone’s names and ages.
         </p>
 
         <form className="relative mt-6 space-y-5 pl-3" onSubmit={onSubmit} noValidate>
@@ -365,43 +301,6 @@ export function RSVPForm() {
 
           {values.attending === "yes" ? (
             <>
-              <section className="space-y-4">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
-                  Your meal
-                </h2>
-                <div>
-                  <label
-                    className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
-                    htmlFor={`${formId}-meal`}
-                  >
-                    Meal preference
-                  </label>
-                  <MealSelect
-                    id={`${formId}-meal`}
-                    value={values.mealPreference}
-                    onChange={set("mealPreference")}
-                    error={errors.mealPreference}
-                    includeChildMeal={false}
-                  />
-                  <FieldError id={`${formId}-meal-error`} message={errors.mealPreference} />
-                </div>
-                <div>
-                  <label
-                    className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
-                    htmlFor={`${formId}-dietary`}
-                  >
-                    Dietary restrictions (optional)
-                  </label>
-                  <textarea
-                    id={`${formId}-dietary`}
-                    className={inputClass()}
-                    rows={2}
-                    value={values.dietaryRestrictions}
-                    onChange={(e) => set("dietaryRestrictions")(e.target.value)}
-                  />
-                </div>
-              </section>
-
               <section className="space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
@@ -468,29 +367,6 @@ export function RSVPForm() {
                               onChange={(e) => updateAdult(index, { name: e.target.value })}
                             />
                           </div>
-                          <div>
-                            <label className="text-xs uppercase tracking-[0.12em] text-taupe">
-                              Meal preference
-                            </label>
-                            <MealSelect
-                              id={`${formId}-adult-meal-${index}`}
-                              value={adult.mealPreference}
-                              onChange={(value) => updateAdult(index, { mealPreference: value })}
-                              includeChildMeal={false}
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs uppercase tracking-[0.12em] text-taupe">
-                              Dietary restrictions
-                            </label>
-                            <input
-                              className={inputClass()}
-                              value={adult.dietaryRestrictions}
-                              onChange={(e) =>
-                                updateAdult(index, { dietaryRestrictions: e.target.value })
-                              }
-                            />
-                          </div>
                         </div>
                       </li>
                     ))}
@@ -519,7 +395,7 @@ export function RSVPForm() {
                 </div>
                 <p className="text-xs text-charcoal/65">
                   Include each child named on your invitation, with name and age, so we can plan
-                  seating and meals.
+                  seating.
                 </p>
                 {hasAdditionalGuests && values.adults.length === 0 ? (
                   <p
@@ -581,28 +457,6 @@ export function RSVPForm() {
                               />
                             </div>
                           </div>
-                          <div>
-                            <label className="text-xs uppercase tracking-[0.12em] text-taupe">
-                              Meal preference
-                            </label>
-                            <MealSelect
-                              id={`${formId}-child-meal-${index}`}
-                              value={child.mealPreference}
-                              onChange={(value) => updateChild(index, { mealPreference: value })}
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs uppercase tracking-[0.12em] text-taupe">
-                              Dietary restrictions
-                            </label>
-                            <input
-                              className={inputClass()}
-                              value={child.dietaryRestrictions}
-                              onChange={(e) =>
-                                updateChild(index, { dietaryRestrictions: e.target.value })
-                              }
-                            />
-                          </div>
                         </div>
                       </li>
                     ))}
@@ -619,62 +473,28 @@ export function RSVPForm() {
                   : null}
               </p>
 
-              <section className="space-y-4">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
-                  Travel & extras
-                </h2>
-                <div>
-                  <label
-                    className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
-                    htmlFor={`${formId}-hotel`}
-                  >
-                    Hotel status
-                  </label>
-                  <select
-                    id={`${formId}-hotel`}
-                    className={inputClass(errors.hotelStatus)}
-                    value={values.hotelStatus}
-                    onChange={(e) => set("hotelStatus")(e.target.value)}
-                  >
-                    <option value="">Select status</option>
-                    {wedding.rsvp.hotelStatuses.map((statusOption) => (
-                      <option key={statusOption} value={statusOption}>
-                        {statusOption}
-                      </option>
-                    ))}
-                  </select>
-                  <FieldError id={`${formId}-hotel-error`} message={errors.hotelStatus} />
-                </div>
-                <div>
-                  <label
-                    className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
-                    htmlFor={`${formId}-flight`}
-                  >
-                    Flight information (optional)
-                  </label>
-                  <textarea
-                    id={`${formId}-flight`}
-                    className={inputClass()}
-                    rows={2}
-                    value={values.flightInfo}
-                    onChange={(e) => set("flightInfo")(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label
-                    className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
-                    htmlFor={`${formId}-song`}
-                  >
-                    Song request (optional)
-                  </label>
-                  <input
-                    id={`${formId}-song`}
-                    className={inputClass()}
-                    value={values.songRequest}
-                    onChange={(e) => set("songRequest")(e.target.value)}
-                  />
-                </div>
-              </section>
+              <div>
+                <label
+                  className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
+                  htmlFor={`${formId}-hotel`}
+                >
+                  Hotel status
+                </label>
+                <select
+                  id={`${formId}-hotel`}
+                  className={inputClass(errors.hotelStatus)}
+                  value={values.hotelStatus}
+                  onChange={(e) => set("hotelStatus")(e.target.value)}
+                >
+                  <option value="">Select status</option>
+                  {wedding.rsvp.hotelStatuses.map((statusOption) => (
+                    <option key={statusOption} value={statusOption}>
+                      {statusOption}
+                    </option>
+                  ))}
+                </select>
+                <FieldError id={`${formId}-hotel-error`} message={errors.hotelStatus} />
+              </div>
             </>
           ) : null}
 

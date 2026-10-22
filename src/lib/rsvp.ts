@@ -1,14 +1,10 @@
 export type RsvpAdultGuest = {
   name: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
 };
 
 export type RsvpChildGuest = {
   name: string;
   age: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
 };
 
 export type RsvpPayload = {
@@ -17,12 +13,7 @@ export type RsvpPayload = {
   email: string;
   mobile: string;
   attending: "yes" | "no";
-  /** Primary guest meal (when attending) */
-  mealPreference: string;
-  dietaryRestrictions: string;
   hotelStatus: string;
-  flightInfo: string;
-  songRequest: string;
   message: string;
   /** Additional adults (spouse, etc.) — not including the primary */
   adults: RsvpAdultGuest[];
@@ -42,39 +33,13 @@ export type RsvpRecord = RsvpPayload & {
   submittedAt: string;
 };
 
-function formatAdultsDetail(primary: {
-  fullName: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
-}, adults: RsvpAdultGuest[]) {
-  const all = [
-    {
-      name: primary.fullName,
-      mealPreference: primary.mealPreference,
-      dietaryRestrictions: primary.dietaryRestrictions,
-    },
-    ...adults,
-  ];
-  return all
-    .map((a) => {
-      const bits = [a.name];
-      if (a.mealPreference) bits.push(a.mealPreference);
-      if (a.dietaryRestrictions) bits.push(`diet: ${a.dietaryRestrictions}`);
-      return bits.join(" — ");
-    })
-    .join("; ");
+function formatAdultsDetail(primaryName: string, adults: RsvpAdultGuest[]) {
+  return [primaryName, ...adults.map((adult) => adult.name)].join("; ");
 }
 
 function formatChildrenDetail(children: RsvpChildGuest[]) {
   if (children.length === 0) return "";
-  return children
-    .map((c) => {
-      const bits = [`${c.name} (age ${c.age})`];
-      if (c.mealPreference) bits.push(c.mealPreference);
-      if (c.dietaryRestrictions) bits.push(`diet: ${c.dietaryRestrictions}`);
-      return bits.join(" — ");
-    })
-    .join("; ");
+  return children.map((child) => `${child.name} (age ${child.age})`).join("; ");
 }
 
 function formatGuestNamesSummary(
@@ -92,8 +57,6 @@ function formatGuestNamesSummary(
 
 export function buildRsvpPartyFields(input: {
   fullName: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
   adults: RsvpAdultGuest[];
   children: RsvpChildGuest[];
 }) {
@@ -104,7 +67,7 @@ export function buildRsvpPartyFields(input: {
     adultCount: String(adultTotal),
     childCount: String(childTotal),
     guestNames: formatGuestNamesSummary(input.fullName, input.adults, input.children),
-    adultsDetail: formatAdultsDetail(input, input.adults),
+    adultsDetail: formatAdultsDetail(input.fullName, input.adults),
     childrenDetail: formatChildrenDetail(input.children),
   };
 }
@@ -125,11 +88,7 @@ function parseAdults(raw: unknown): RsvpAdultGuest[] {
       const row = item as Record<string, unknown>;
       const name = String(row.name ?? "").trim();
       if (!name) return null;
-      return {
-        name,
-        mealPreference: String(row.mealPreference ?? "").trim(),
-        dietaryRestrictions: String(row.dietaryRestrictions ?? "").trim(),
-      };
+      return { name };
     })
     .filter((item): item is RsvpAdultGuest => Boolean(item));
 }
@@ -143,12 +102,7 @@ function parseChildren(raw: unknown): RsvpChildGuest[] {
       const name = String(row.name ?? "").trim();
       const age = String(row.age ?? "").trim();
       if (!name || !age) return null;
-      return {
-        name,
-        age,
-        mealPreference: String(row.mealPreference ?? "").trim(),
-        dietaryRestrictions: String(row.dietaryRestrictions ?? "").trim(),
-      };
+      return { name, age };
     })
     .filter((item): item is RsvpChildGuest => Boolean(item));
 }
@@ -165,19 +119,13 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
   if (!fullName || !email || !mobile || !attending) return null;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
 
-  const mealPreference = String(body.mealPreference ?? "").trim();
-  const dietaryRestrictions = String(body.dietaryRestrictions ?? "").trim();
   const adults = attending === "yes" ? parseAdults(body.adults) : [];
   const children = attending === "yes" ? parseChildren(body.children) : [];
-
-  if (attending === "yes" && !mealPreference) return null;
 
   const party =
     attending === "yes"
       ? buildRsvpPartyFields({
           fullName,
-          mealPreference,
-          dietaryRestrictions,
           adults,
           children,
         })
@@ -195,11 +143,7 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
     email,
     mobile,
     attending,
-    mealPreference: attending === "yes" ? mealPreference : "",
-    dietaryRestrictions: attending === "yes" ? dietaryRestrictions : "",
     hotelStatus: attending === "yes" ? String(body.hotelStatus ?? "").trim() : "",
-    flightInfo: attending === "yes" ? String(body.flightInfo ?? "").trim() : "",
-    songRequest: attending === "yes" ? String(body.songRequest ?? "").trim() : "",
     message: String(body.message ?? "").trim(),
     adults,
     children,

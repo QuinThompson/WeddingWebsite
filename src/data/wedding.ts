@@ -605,7 +605,6 @@ export const wedding = {
   ] as FaqItem[],
 
   rsvp: {
-    mealOptions: ["Chicken", "Fish", "Vegetarian", "Vegan", "Child meal"],
     hotelStatuses: [
       "Staying at Coconut Bay Resort",
       "Staying elsewhere",
