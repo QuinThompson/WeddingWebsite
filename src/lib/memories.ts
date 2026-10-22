@@ -82,7 +82,9 @@ export async function fetchGuestMemories(): Promise<{
  * Falls back to localStorage (this browser only) otherwise.
  *
  * Guests can pick large camera photos (up to 40MB). We compress/resize
- * client-side before upload so the payload stays under MAX_UPLOAD_BYTES.
+ * client-side before upload. Vercel rejects function bodies over 4.5MB
+ * (FUNCTION_PAYLOAD_TOO_LARGE) before the route runs, and base64 adds
+ * about a third, so the compressed file itself must stay near 3MB.
  */
 export async function persistGuestMemory(file: File): Promise<{
   memory: GuestMemory;
@@ -117,6 +119,12 @@ export async function persistGuestMemory(file: File): Promise<{
     memories?: GuestMemory[];
   } | null;
 
+  if (response.status === 413) {
+    throw new Error(
+      "That photo is too large to upload. Please try a smaller image.",
+    );
+  }
+
   if (!response.ok) {
     throw new Error(data?.error || "Upload failed.");
   }
@@ -143,8 +151,12 @@ export async function persistGuestMemory(file: File): Promise<{
 
 /** Original camera/library pick limit (before compression). */
 const MAX_ORIGINAL_BYTES = 40 * 1024 * 1024;
-/** Max size after compression (uploaded payload). */
-const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
+/**
+ * Max binary size after compression.
+ * A 3MB file becomes ~4MB once it is a base64 data URL inside JSON, which
+ * stays under Vercel's 4.5MB serverless request-body limit.
+ */
+const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 const MAX_DIMENSION = 4000;
 
 async function prepareImageForUpload(file: File): Promise<{

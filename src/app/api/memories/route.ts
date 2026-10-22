@@ -12,8 +12,12 @@ import {
 
 export const runtime = "nodejs";
 
-/** Keep under typical serverless body limits after base64 (~12MB binary ≈ 16MB JSON). */
-const MAX_BYTES = 12 * 1024 * 1024;
+/**
+ * Vercel returns 413 FUNCTION_PAYLOAD_TOO_LARGE when the raw request body
+ * exceeds 4.5MB. The client compresses to ~3MB binary (~4MB as base64 JSON).
+ * Reject anything larger that still reaches this route.
+ */
+const MAX_BODY_CHARS = Math.floor(4.2 * 1024 * 1024);
 
 type AppsMemoriesResponse = {
   ok?: boolean;
@@ -117,11 +121,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const approxBytes = Math.floor((base64.length * 3) / 4);
-  if (approxBytes > MAX_BYTES) {
+  if (base64.length > MAX_BODY_CHARS) {
     return NextResponse.json(
-      { error: "Please choose an image under 12MB (after compression)." },
-      { status: 400 },
+      { error: "That photo is too large to upload. Please try a smaller image." },
+      { status: 413 },
     );
   }
 
