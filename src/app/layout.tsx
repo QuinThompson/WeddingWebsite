@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Allura, Cormorant_Garamond, Montserrat } from "next/font/google";
 import { wedding } from "@/data/wedding";
 import "./globals.css";
@@ -24,6 +24,11 @@ const script = Allura({
 export const metadata: Metadata = {
   title: `${wedding.couple.fullNames} Wedding Invitation`,
   description: `Digital wedding passport for ${wedding.couple.fullNames} — ${wedding.date.display} in ${wedding.destination.display}.`,
+};
+
+export const viewport: Viewport = {
+  colorScheme: "only light",
+  themeColor: "#f8f5ee",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
