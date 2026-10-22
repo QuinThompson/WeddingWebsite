@@ -1,0 +1,389 @@
+/**
+ * Unified Google Apps Script for Shenice & Quinton wedding invite data.
+ *
+ * ONE spreadsheet + ONE Drive folder + ONE web app deployment.
+ *
+ * Spreadsheet tabs (auto-created):
+ *   - RSVPs
+ *   - Registry
+ *   - Memories
+ *
+ * Drive:
+ *   - Create a folder "Wedding Guest Memories"
+ *   - Paste its folder ID into MEMORIES_FOLDER_ID below
+ *
+ * Deploy:
+ *   1. Extensions → Apps Script → paste this file → Save
+ *   2. Set MEMORIES_FOLDER_ID
+ *   3. Deploy → New deployment → Web app
+ *      Execute as: Me | Who has access: Anyone
+ *   4. Copy the /exec URL into GOOGLE_APPS_SCRIPT_URL (.env.local + host)
+ *
+ * After editing this script, Deploy → Manage deployments → Edit (pencil) → New version.
+ */
+
+/** Paste the Drive folder ID (the long id in the folder URL). */
+var MEMORIES_FOLDER_ID = "1f_sTJnG7dxWW_GxSBzSjhFYN-D_dwp78";
+
+var RSVP_SHEET = "RSVPs";
+var REGISTRY_SHEET = "Registry";
+var MEMORIES_SHEET = "Memories";
+
+var RSVP_HEADERS = [
+  "Submitted At",
+  "ID",
+  "Full Name",
+  "Email",
+  "Mobile",
+  "Attending",
+  "Guest Count",
+  "Guest Names",
+  "Meal Preference",
+  "Dietary Restrictions",
+  "Hotel Status",
+  "Flight Info",
+  "Song Request",
+  "Message",
+  "Adult Count",
+  "Child Count",
+  "Adults Detail",
+  "Children Detail",
+];
+
+var REGISTRY_HEADERS = [
+  "ID",
+  "Title",
+  "Description",
+  "Store Label",
+  "Store URL",
+  "Price Label",
+  "Claimed By",
+  "Claimed At",
+  "Created At",
+];
+
+var MEMORIES_HEADERS = [
+  "ID",
+  "File ID",
+  "File Name",
+  "Alt",
+  "View URL",
+  "Created At",
+];
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var type = String(data.type || "");
+
+    if (type === "rsvp") return handleRsvp_(data);
+    if (type === "registry-list") return handleRegistryList_();
+    if (type === "registry-seed") return handleRegistrySeed_(data);
+    if (type === "registry-claim") return handleRegistryClaim_(data);
+    if (type === "registry-add") return handleRegistryAdd_(data);
+    if (type === "memories-list") return handleMemoriesList_();
+    if (type === "memories-upload") return handleMemoriesUpload_(data);
+
+    return json_({ ok: false, error: "Unknown type: " + type });
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  }
+}
+
+function doGet(e) {
+  try {
+    var type = (e && e.parameter && e.parameter.type) || "ping";
+    if (type === "registry" || type === "registry-list") return handleRegistryList_();
+    if (type === "memories" || type === "memories-list") return handleMemoriesList_();
+    return json_({ ok: true, service: "wedding-google", types: [
+      "rsvp",
+      "registry-list",
+      "registry-seed",
+      "registry-claim",
+      "registry-add",
+      "memories-list",
+      "memories-upload",
+    ]});
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  }
+}
+
+/* ---------- RSVP ---------- */
+
+function handleRsvp_(data) {
+  var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
+  ensureHeaders_(sheet, RSVP_HEADERS);
+  sheet.appendRow([
+    data.submittedAt || new Date().toISOString(),
+    data.id || "",
+    data.fullName || "",
+    data.email || "",
+    data.mobile || "",
+    data.attending || "",
+    data.guestCount || "",
+    data.guestNames || "",
+    data.mealPreference || "",
+    data.dietaryRestrictions || "",
+    data.hotelStatus || "",
+    data.flightInfo || "",
+    data.songRequest || "",
+    data.message || "",
+    data.adultCount || "",
+    data.childCount || "",
+    data.adultsDetail || "",
+    data.childrenDetail || "",
+  ]);
+  return json_({ ok: true, stored: "rsvp" });
+}
+
+/* ---------- Registry ---------- */
+
+function handleRegistryList_() {
+  var sheet = getOrCreateSheet_(REGISTRY_SHEET, REGISTRY_HEADERS);
+  return json_({ ok: true, items: readRegistryItems_(sheet) });
+}
+
+function handleRegistrySeed_(data) {
+  var sheet = getOrCreateSheet_(REGISTRY_SHEET, REGISTRY_HEADERS);
+  var existing = readRegistryItems_(sheet);
+  if (existing.length > 0) {
+    return json_({ ok: true, items: existing, seeded: false });
+  }
+  var items = data.items || [];
+  for (var i = 0; i < items.length; i++) {
+    appendRegistryRow_(sheet, items[i]);
+  }
+  return json_({ ok: true, items: readRegistryItems_(sheet), seeded: true });
+}
+
+function handleRegistryClaim_(data) {
+  var id = String(data.id || "");
+  var guestName = String(data.guestName || "").trim();
+  if (!id || !guestName) {
+    return json_({ ok: false, error: "id and guestName are required" });
+  }
+
+  var sheet = getOrCreateSheet_(REGISTRY_SHEET, REGISTRY_HEADERS);
+  var row = findRegistryRow_(sheet, id);
+  if (!row) return json_({ ok: false, error: "Gift not found" });
+
+  var claimedBy = String(sheet.getRange(row, 7).getValue() || "").trim();
+  if (claimedBy) {
+    return json_({
+      ok: false,
+      error: "Already claimed",
+      items: readRegistryItems_(sheet),
+    });
+  }
+
+  sheet.getRange(row, 7).setValue(guestName);
+  sheet.getRange(row, 8).setValue(data.claimedAt || new Date().toISOString());
+  return json_({ ok: true, items: readRegistryItems_(sheet) });
+}
+
+function handleRegistryAdd_(data) {
+  var sheet = getOrCreateSheet_(REGISTRY_SHEET, REGISTRY_HEADERS);
+  var item = {
+    id: data.id || "gift-" + Date.now(),
+    title: data.title || "",
+    description: data.description || "",
+    storeLabel: data.storeLabel || "Store",
+    storeUrl: data.storeUrl || "",
+    priceLabel: data.priceLabel || "",
+    claimedBy: "",
+    claimedAt: "",
+    createdAt: data.createdAt || new Date().toISOString(),
+  };
+  if (!item.title || !item.storeUrl) {
+    return json_({ ok: false, error: "title and storeUrl are required" });
+  }
+  appendRegistryRow_(sheet, item);
+  return json_({ ok: true, items: readRegistryItems_(sheet) });
+}
+
+function appendRegistryRow_(sheet, item) {
+  sheet.appendRow([
+    item.id || "",
+    item.title || "",
+    item.description || "",
+    item.storeLabel || "",
+    item.storeUrl || "",
+    item.priceLabel || "",
+    item.claimedBy || "",
+    item.claimedAt || "",
+    item.createdAt || new Date().toISOString(),
+  ]);
+}
+
+function readRegistryItems_(sheet) {
+  var values = sheet.getDataRange().getValues();
+  var items = [];
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    if (!row[0]) continue;
+    items.push({
+      id: String(row[0]),
+      title: String(row[1] || ""),
+      description: String(row[2] || ""),
+      storeLabel: String(row[3] || ""),
+      storeUrl: String(row[4] || ""),
+      priceLabel: String(row[5] || ""),
+      claimedBy: String(row[6] || "").trim() || null,
+      claimedAt: String(row[7] || "").trim() || null,
+      createdAt: String(row[8] || ""),
+    });
+  }
+  return items;
+}
+
+function findRegistryRow_(sheet, id) {
+  var values = sheet.getDataRange().getValues();
+  for (var r = 1; r < values.length; r++) {
+    if (String(values[r][0]) === id) return r + 1; // 1-indexed
+  }
+  return null;
+}
+
+/* ---------- Memories (Drive + sheet index) ---------- */
+
+function handleMemoriesList_() {
+  var sheet = getOrCreateSheet_(MEMORIES_SHEET, MEMORIES_HEADERS);
+  return json_({ ok: true, memories: readMemories_(sheet) });
+}
+
+function handleMemoriesUpload_(data) {
+  if (!MEMORIES_FOLDER_ID || MEMORIES_FOLDER_ID.indexOf("PASTE_") === 0) {
+    return json_({
+      ok: false,
+      error: "Set MEMORIES_FOLDER_ID in the Apps Script before uploading.",
+    });
+  }
+
+  var base64 = String(data.base64 || "");
+  var mimeType = String(data.mimeType || "image/jpeg");
+  var fileName = String(data.fileName || "memory.jpg");
+  var alt = String(data.alt || fileName);
+  var id = String(data.id || "mem-" + Date.now());
+
+  if (!base64) return json_({ ok: false, error: "base64 image data is required" });
+
+  var comma = base64.indexOf(",");
+  if (base64.indexOf("data:") === 0 && comma > -1) {
+    base64 = base64.substring(comma + 1);
+  }
+
+  var folder;
+  try {
+    folder = DriveApp.getFolderById(MEMORIES_FOLDER_ID);
+  } catch (err) {
+    return json_({
+      ok: false,
+      error:
+        "Drive access denied opening the Memories folder. Share that folder with the Google account that owns this script, run testMemoriesAccess once, approve Drive, then redeploy.",
+    });
+  }
+
+  var file;
+  try {
+    var blob = Utilities.newBlob(Utilities.base64Decode(base64), mimeType, fileName);
+    file = folder.createFile(blob);
+  } catch (err) {
+    return json_({
+      ok: false,
+      error: "Drive access denied while saving the photo. The script owner needs Editor access to the Memories folder.",
+    });
+  }
+
+  try {
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (err) {
+    return json_({
+      ok: false,
+      error:
+        "The photo was saved, but Google blocked sharing it. In the Memories folder, allow anyone with the link to view files.",
+    });
+  }
+
+  var fileId = file.getId();
+  var viewUrl = "https://lh3.googleusercontent.com/d/" + fileId + "=s2000";
+  var createdAt = data.createdAt || new Date().toISOString();
+
+  var sheet = getOrCreateSheet_(MEMORIES_SHEET, MEMORIES_HEADERS);
+  sheet.appendRow([id, fileId, fileName, alt, viewUrl, createdAt]);
+
+  return json_({
+    ok: true,
+    memory: {
+      id: id,
+      src: viewUrl,
+      alt: alt,
+      createdAt: createdAt,
+      fileId: fileId,
+    },
+    memories: readMemories_(sheet),
+  });
+}
+
+/** Run this once from the Apps Script editor to grant Drive permission. */
+function testMemoriesAccess() {
+  var folder = DriveApp.getFolderById(MEMORIES_FOLDER_ID);
+  Logger.log("Memories folder: " + folder.getName());
+}
+
+function readMemories_(sheet) {
+  var values = sheet.getDataRange().getValues();
+  var memories = [];
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    if (!row[0]) continue;
+    memories.push({
+      id: String(row[0]),
+      fileId: String(row[1] || ""),
+      fileName: String(row[2] || ""),
+      alt: String(row[3] || "Guest wedding memory"),
+      src: String(row[4] || ""),
+      createdAt: String(row[5] || ""),
+    });
+  }
+  // newest first
+  memories.sort(function (a, b) {
+    return String(b.createdAt).localeCompare(String(a.createdAt));
+  });
+  return memories;
+}
+
+/* ---------- helpers ---------- */
+
+function getOrCreateSheet_(name, headers) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) sheet = ss.insertSheet(name);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
+  }
+  return sheet;
+}
+
+/** Extends row 1 when new columns are added (does not rewrite existing data). */
+function ensureHeaders_(sheet, headers) {
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var current = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var needsUpdate = false;
+  for (var i = 0; i < headers.length; i++) {
+    if (String(current[i] || "") !== headers[i]) {
+      needsUpdate = true;
+      break;
+    }
+  }
+  if (!needsUpdate && lastCol >= headers.length) return;
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
+}
+
+function json_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
+}

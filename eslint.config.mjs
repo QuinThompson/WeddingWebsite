@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Google Apps Script templates (not Node/Next code)
+    "scripts/google-apps-script*.js",
   ]),
 ]);
 
