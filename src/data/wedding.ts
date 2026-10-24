@@ -410,7 +410,7 @@ export const wedding = {
     {
       id: "plus-one",
       title: "Plus-ones & additional guests",
-      body: "Your invitation includes a set number of adults and children. If your invitation allows a plus-one, you may add a plus-one adult or child if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
+      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment for a paid plus-one is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
     },
     {
       id: "dress-code",
@@ -567,7 +567,7 @@ export const wedding = {
     {
       question: "Can I bring a plus-one?",
       answer:
-        "Your invitation includes a set number of adults and children. If your invitation allows a plus-one, you may add a plus-one adult or child if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
+        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment for a paid plus-one is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
     },
     {
       question: "What about gifts?",
@@ -598,7 +598,7 @@ export const wedding = {
       { value: "no", label: "Unable to attend" },
     ],
     additionalGuestNotice:
-      "If your invitation allows a plus-one, you may add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
+      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
   },
 
   memories: {

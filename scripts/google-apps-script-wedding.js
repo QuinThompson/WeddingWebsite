@@ -52,6 +52,8 @@ var RSVP_HEADERS = [
   "Allowed Children",
   "Plus One Adults",
   "Plus One Children",
+  "Paid Plus One Adults",
+  "Paid Plus One Children",
 ];
 
 var GUEST_HEADERS = [
@@ -126,13 +128,16 @@ function doGet(e) {
 /* ---------- RSVP ---------- */
 
 function handleGuestLookup_(data) {
-  var guest = findGuestByCode_(data.code);
-  if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
-  return json_({ ok: true, guest: guest });
+  var found = findGuestByCode_(data.code);
+  if (found.error) return json_({ ok: false, error: found.error });
+  if (!found.guest) return json_({ ok: false, error: "That invitation code was not found." });
+  return json_({ ok: true, guest: found.guest });
 }
 
 function handleRsvp_(data) {
-  var guest = findGuestByCode_(data.invitationCode);
+  var found = findGuestByCode_(data.invitationCode);
+  if (found.error) return json_({ ok: false, error: found.error });
+  var guest = found.guest;
   if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
 
   var attending = String(data.attending || "");
@@ -140,12 +145,10 @@ function handleRsvp_(data) {
   var childCount = attending === "yes" ? Number(data.childCount || 0) : 0;
   var plusOneAdults = attending === "yes" ? Math.max(0, adultCount - guest.allowedAdults) : 0;
   var plusOneChildren = attending === "yes" ? Math.max(0, childCount - guest.allowedChildren) : 0;
-  if (!guest.plusOneAllowed && (plusOneAdults > 0 || plusOneChildren > 0)) {
-    return json_({
-      ok: false,
-      error: "This invitation does not include a plus-one.",
-    });
-  }
+  var freeSlots = attending === "yes" && guest.plusOneAllowed ? 1 : 0;
+  var complimentaryAdults = Math.min(plusOneAdults, freeSlots);
+  var paidPlusOneAdults = plusOneAdults - complimentaryAdults;
+  var paidPlusOneChildren = plusOneChildren - Math.min(plusOneChildren, freeSlots - complimentaryAdults);
 
   var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
   alignRsvpColumns_(sheet);
@@ -170,6 +173,8 @@ function handleRsvp_(data) {
     guest.allowedChildren,
     plusOneAdults,
     plusOneChildren,
+    paidPlusOneAdults,
+    paidPlusOneChildren,
   ]);
   return json_({ ok: true, stored: "rsvp" });
 }
@@ -185,25 +190,84 @@ function isYes_(value) {
 
 function findGuestByCode_(code) {
   var wanted = normalizeCode_(code);
-  if (!wanted) return null;
+  if (!wanted) return { guest: null, error: "Enter your invitation code." };
 
-  var sheet = getOrCreateSheet_(GUESTS_SHEET, GUEST_HEADERS);
-  ensureHeaders_(sheet, GUEST_HEADERS);
-  var last = sheet.getLastRow();
-  if (last < 2) return null;
-
-  var rows = sheet.getRange(2, 1, last - 1, GUEST_HEADERS.length).getValues();
-  for (var i = 0; i < rows.length; i++) {
-    if (normalizeCode_(rows[i][0]) !== wanted) continue;
+  var sheet = findGuestSheet_();
+  if (!sheet) {
     return {
-      code: String(rows[i][0]).trim(),
-      household: String(rows[i][1] || "").trim() || "Your invitation",
-      allowedAdults: Math.max(0, Number(rows[i][2]) || 0),
-      allowedChildren: Math.max(0, Number(rows[i][3]) || 0),
-      plusOneAllowed: isYes_(rows[i][4]),
+      guest: null,
+      error:
+        "No guest list was found. On any tab, set row 1 to Code, Household, Allowed Adults, Allowed Children, Plus One, then add each invitation underneath.",
     };
   }
+
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var values = sheet.getRange(1, 1, sheet.getLastRow(), lastCol).getValues();
+  var header = values[0];
+  var codeCol = headerIndex_(header, "Code");
+  var householdCol = headerIndex_(header, "Household");
+  var adultsCol = headerIndex_(header, "Allowed Adults");
+  var childrenCol = headerIndex_(header, "Allowed Children");
+  var plusCol = headerIndex_(header, "Plus One");
+  if (codeCol < 0 || adultsCol < 0 || childrenCol < 0) {
+    return {
+      guest: null,
+      error:
+        "The guest list needs columns named Code, Household, Allowed Adults, Allowed Children, and Plus One.",
+    };
+  }
+
+  for (var i = 1; i < values.length; i++) {
+    if (normalizeCode_(values[i][codeCol]) !== wanted) continue;
+    return {
+      guest: {
+        code: String(values[i][codeCol]).trim(),
+        household:
+          householdCol >= 0 && String(values[i][householdCol] || "").trim()
+            ? String(values[i][householdCol]).trim()
+            : "Your invitation",
+        allowedAdults: Math.max(0, Number(values[i][adultsCol]) || 0),
+        allowedChildren: Math.max(0, Number(values[i][childrenCol]) || 0),
+        plusOneAllowed: plusCol >= 0 ? isYes_(values[i][plusCol]) : false,
+      },
+    };
+  }
+
+  return { guest: null };
+}
+
+/** The guest list can live on any tab. Match it by the column titles, not the tab name. */
+function findGuestSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) return null;
+
+  var named = ss.getSheetByName(GUESTS_SHEET);
+  if (named && sheetLooksLikeGuestList_(named)) return named;
+
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheetLooksLikeGuestList_(sheets[i])) return sheets[i];
+  }
   return null;
+}
+
+function sheetLooksLikeGuestList_(sheet) {
+  if (!sheet || sheet.getLastRow() < 1 || sheet.getLastColumn() < 1) return false;
+  var width = Math.min(sheet.getLastColumn(), 12);
+  var header = sheet.getRange(1, 1, 1, width).getValues()[0];
+  return (
+    headerIndex_(header, "Code") >= 0 &&
+    headerIndex_(header, "Allowed Adults") >= 0 &&
+    headerIndex_(header, "Allowed Children") >= 0
+  );
+}
+
+function headerIndex_(headerRow, name) {
+  var wanted = String(name || "").trim().toLowerCase();
+  for (var i = 0; i < headerRow.length; i++) {
+    if (String(headerRow[i] || "").trim().toLowerCase() === wanted) return i;
+  }
+  return -1;
 }
 
 /* ---------- Registry ---------- */

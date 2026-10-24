@@ -12,19 +12,48 @@ export type InvitationAllowance = {
   household: string;
   allowedAdults: number;
   allowedChildren: number;
-  /** Yes on the Guests sheet means this invitation may add paid plus-ones. */
+  /**
+   * Yes on the Guests sheet means one plus-one is included at no charge.
+   * No still allows a plus-one, but that guest must be paid for.
+   */
   plusOneAllowed: boolean;
 };
 
-export function plusOneCounts(
-  allowance: Pick<InvitationAllowance, "allowedAdults" | "allowedChildren">,
-  adultCount: number,
-  childCount: number,
-) {
+export function plusOneCounts(allowance: InvitationAllowance, adultCount: number, childCount: number) {
+  const extraAdults = Math.max(0, adultCount - allowance.allowedAdults);
+  const extraChildren = Math.max(0, childCount - allowance.allowedChildren);
+  const freeSlots = allowance.plusOneAllowed ? 1 : 0;
+  const complimentaryAdults = Math.min(extraAdults, freeSlots);
+  const complimentaryChildren = Math.min(extraChildren, freeSlots - complimentaryAdults);
+
   return {
-    plusOneAdults: Math.max(0, adultCount - allowance.allowedAdults),
-    plusOneChildren: Math.max(0, childCount - allowance.allowedChildren),
+    plusOneAdults: extraAdults,
+    plusOneChildren: extraChildren,
+    complimentaryAdults,
+    complimentaryChildren,
+    paidAdults: extraAdults - complimentaryAdults,
+    paidChildren: extraChildren - complimentaryChildren,
   };
+}
+
+/** Label for an extra guest. The included plus-one is applied to the first extra adult, then the first extra child. */
+export function plusOneTag(
+  allowance: InvitationAllowance,
+  kind: "adult" | "child",
+  index: number,
+  adultCount: number,
+): "" | "included" | "paid" {
+  if (kind === "adult") {
+    const extraNumber = index + 2 - allowance.allowedAdults;
+    if (extraNumber <= 0) return "";
+    return allowance.plusOneAllowed && extraNumber === 1 ? "included" : "paid";
+  }
+
+  const extraNumber = index + 1 - allowance.allowedChildren;
+  if (extraNumber <= 0) return "";
+  const extraAdults = Math.max(0, adultCount - allowance.allowedAdults);
+  const freeSlotLeft = allowance.plusOneAllowed && extraAdults === 0;
+  return freeSlotLeft && extraNumber === 1 ? "included" : "paid";
 }
 
 export type RsvpPayload = {
@@ -170,7 +199,16 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
   const plusOnes =
     attending === "yes"
       ? plusOneCounts(
-          { allowedAdults, allowedChildren },
+          {
+            code: invitationCode,
+            household: String(body.household ?? ""),
+            allowedAdults,
+            allowedChildren,
+            plusOneAllowed:
+              body.plusOneAllowed === true ||
+              String(body.plusOneAllowed ?? "").toLowerCase() === "true" ||
+              String(body.plusOneAllowed ?? "").toLowerCase() === "yes",
+          },
           Number(party.adultCount) || 0,
           Number(party.childCount) || 0,
         )

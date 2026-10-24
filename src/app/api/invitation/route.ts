@@ -51,10 +51,9 @@ export async function POST(request: Request) {
   }
 
   if (!result.data?.ok || !result.data.guest) {
-    return NextResponse.json(
-      { error: result.data?.error || "That invitation code was not found." },
-      { status: 404 },
-    );
+    const message = result.data?.error || "That invitation code was not found.";
+    const notFound = /not found/i.test(message);
+    return NextResponse.json({ error: message }, { status: notFound ? 404 : 422 });
   }
 
   return NextResponse.json({ ok: true, guest: result.data.guest });

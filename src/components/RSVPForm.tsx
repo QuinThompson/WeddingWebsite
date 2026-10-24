@@ -6,6 +6,7 @@ import { wedding } from "@/data/wedding";
 import {
   buildRsvpPartyFields,
   plusOneCounts,
+  plusOneTag,
   type InvitationAllowance,
   type RsvpAdultGuest,
   type RsvpChildGuest,
@@ -205,31 +206,17 @@ export function RSVPForm() {
 
     if (!invitation) return;
 
-    if (
-      values.attending === "yes" &&
-      !invitation.plusOneAllowed &&
-      (1 + values.adults.length > invitation.allowedAdults ||
-        values.children.length > invitation.allowedChildren)
-    ) {
-      setSubmitError("This invitation does not include a plus-one.");
-      setStatus("error");
-      return;
-    }
-
-    const plusOnes =
-      values.attending === "yes"
-        ? plusOneCounts(
-            invitation,
-            1 + values.adults.length,
-            values.children.length,
-          )
-        : { plusOneAdults: 0, plusOneChildren: 0 };
+    const plusOnes = plusOneCounts(
+      invitation,
+      values.attending === "yes" ? 1 + values.adults.length : 0,
+      values.attending === "yes" ? values.children.length : 0,
+    );
 
     setStatus("loading");
     setSubmitError(null);
     try {
       await submitRsvp(values, invitation);
-      setNotedPlusOne(plusOnes.plusOneAdults + plusOnes.plusOneChildren > 0);
+      setNotedPlusOne(plusOnes.paidAdults + plusOnes.paidChildren > 0);
       setStatus("success");
       setValues(initialState);
     } catch (err) {
@@ -325,14 +312,9 @@ export function RSVPForm() {
 
   const adultTotal = values.attending === "yes" ? 1 + values.adults.length : 0;
   const childTotal = values.attending === "yes" ? values.children.length : 0;
-  const plusOnes =
-    values.attending === "yes"
-      ? plusOneCounts(invitation, adultTotal, childTotal)
-      : { plusOneAdults: 0, plusOneChildren: 0 };
-  const nextAdultIsPlusOne = values.adults.length + 2 > invitation.allowedAdults;
-  const nextChildIsPlusOne = values.children.length + 1 > invitation.allowedChildren;
-  const canAddAdult = invitation.plusOneAllowed || !nextAdultIsPlusOne;
-  const canAddChild = invitation.plusOneAllowed || !nextChildIsPlusOne;
+  const plusOnes = plusOneCounts(invitation, adultTotal, childTotal);
+  const nextAdultTag = plusOneTag(invitation, "adult", values.adults.length, adultTotal);
+  const nextChildTag = plusOneTag(invitation, "child", values.children.length, adultTotal);
 
   return (
     <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
@@ -348,8 +330,8 @@ export function RSVPForm() {
             {invitation.allowedAdults === 1 ? "adult" : "adults"} and {invitation.allowedChildren}{" "}
             {invitation.allowedChildren === 1 ? "child" : "children"}.
             {invitation.plusOneAllowed
-              ? " This invitation may add plus-one adults or children beyond that, if you are willing to pay."
-              : " Plus-ones are not included on this invitation."}
+              ? " One plus-one is included at no charge. Any further plus-one can be added if you are willing to pay."
+              : " You may add a plus-one if you are willing to pay. Payment is due by January 31, 2027, or that plus-one will be canceled."}
           </p>
           <button
             type="button"
@@ -463,20 +445,22 @@ export function RSVPForm() {
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
                     Additional adults
                   </h2>
-                  {canAddAdult ? (
-                    <button
-                      type="button"
-                      className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
-                      onClick={() =>
-                        setValues((current) => ({
-                          ...current,
-                          adults: [...current.adults, emptyAdult()],
-                        }))
-                      }
-                    >
-                      {nextAdultIsPlusOne ? "+ Add plus-one adult" : "+ Add adult"}
-                    </button>
-                  ) : null}
+                  <button
+                    type="button"
+                    className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                    onClick={() =>
+                      setValues((current) => ({
+                        ...current,
+                        adults: [...current.adults, emptyAdult()],
+                      }))
+                    }
+                  >
+                    {nextAdultTag === "included"
+                      ? "+ Add included plus-one"
+                      : nextAdultTag === "paid"
+                        ? "+ Add paid plus-one"
+                        : "+ Add adult"}
+                  </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
                   Other adults on this invitation, not including yourself. Anyone beyond the{" "}
@@ -495,7 +479,11 @@ export function RSVPForm() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
                             Adult {index + 2}
-                            {index + 2 > invitation.allowedAdults ? " · Plus-one" : ""}
+                            {plusOneTag(invitation, "adult", index, adultTotal) === "included"
+                              ? " · Plus-one, no charge"
+                              : plusOneTag(invitation, "adult", index, adultTotal) === "paid"
+                                ? " · Plus-one, payment required"
+                                : ""}
                           </p>
                           <button
                             type="button"
@@ -534,20 +522,22 @@ export function RSVPForm() {
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
                     Children
                   </h2>
-                  {canAddChild ? (
-                    <button
-                      type="button"
-                      className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
-                      onClick={() =>
-                        setValues((current) => ({
-                          ...current,
-                          children: [...current.children, emptyChild()],
-                        }))
-                      }
-                    >
-                      {nextChildIsPlusOne ? "+ Add plus-one child" : "+ Add child"}
-                    </button>
-                  ) : null}
+                  <button
+                    type="button"
+                    className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                    onClick={() =>
+                      setValues((current) => ({
+                        ...current,
+                        children: [...current.children, emptyChild()],
+                      }))
+                    }
+                  >
+                    {nextChildTag === "included"
+                      ? "+ Add included plus-one"
+                      : nextChildTag === "paid"
+                        ? "+ Add paid plus-one"
+                        : "+ Add child"}
+                  </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
                   Children on this invitation, with name and age. Anyone beyond the{" "}
@@ -566,7 +556,11 @@ export function RSVPForm() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
                             Child {index + 1}
-                            {index + 1 > invitation.allowedChildren ? " · Plus-one" : ""}
+                            {plusOneTag(invitation, "child", index, adultTotal) === "included"
+                              ? " · Plus-one, no charge"
+                              : plusOneTag(invitation, "child", index, adultTotal) === "paid"
+                                ? " · Plus-one, payment required"
+                                : ""}
                           </p>
                           <button
                             type="button"
@@ -619,11 +613,11 @@ export function RSVPForm() {
                 Party total: <span className="font-semibold">{partyTotal}</span>{" "}
                 {partyTotal === 1 ? "guest" : "guests"} ({adultTotal}{" "}
                 {adultTotal === 1 ? "adult" : "adults"}, {childTotal}{" "}
-                {childTotal === 1 ? "child" : "children"}). Plus-ones: {plusOnes.plusOneAdults}{" "}
-                {plusOnes.plusOneAdults === 1 ? "adult" : "adults"}, {plusOnes.plusOneChildren}{" "}
-                {plusOnes.plusOneChildren === 1 ? "child" : "children"}.
+                {childTotal === 1 ? "child" : "children"}). Paid plus-ones: {plusOnes.paidAdults}{" "}
+                {plusOnes.paidAdults === 1 ? "adult" : "adults"}, {plusOnes.paidChildren}{" "}
+                {plusOnes.paidChildren === 1 ? "child" : "children"}.
               </p>
-              {plusOnes.plusOneAdults + plusOnes.plusOneChildren > 0 ? (
+              {plusOnes.paidAdults + plusOnes.paidChildren > 0 ? (
                 <p
                   className="rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85"
                   role="note"

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DetailPageShell } from "@/components/DetailPageShell";
-import { FAQAccordion } from "@/components/FAQAccordion";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
 
@@ -44,10 +43,38 @@ export function DestinationGuide() {
         </Link>
       </Section>
 
-      <ScrollReveal className="mt-10">
-        <h2 className="display mb-4 text-3xl text-charcoal">Frequently Asked</h2>
-        <FAQAccordion items={wedding.faqs} />
-      </ScrollReveal>
+      <Section title="Wedding questions">
+        <p>
+          For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at{" "}
+          <a
+            href="mailto:weddings@cbayna.com"
+            className="text-lilac-deep underline underline-offset-4"
+          >
+            weddings@cbayna.com
+          </a>{" "}
+          and mention Shenice & Quinton’s wedding (May 12, 2027). For room reservations, email{" "}
+          <a
+            href="mailto:reservations@cbayresort.com"
+            className="text-lilac-deep underline underline-offset-4"
+          >
+            reservations@cbayresort.com
+          </a>
+          , call{" "}
+          <a href="tel:+18772520304" className="text-lilac-deep underline underline-offset-4">
+            877-252-0304
+          </a>
+          , or visit{" "}
+          <a
+            href="https://www.cbayresort.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-lilac-deep underline underline-offset-4"
+          >
+            www.cbayresort.com
+          </a>
+          .
+        </p>
+      </Section>
     </DetailPageShell>
   );
 }
