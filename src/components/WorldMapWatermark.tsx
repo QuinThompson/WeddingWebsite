@@ -80,15 +80,17 @@ export function WorldMapWatermark({ className }: { className?: string }) {
         <circle cx="122" cy="100" r="2.2" fill="currentColor" />
         <circle cx="252" cy="70" r="2.2" fill="currentColor" />
 
-        {/* Just above the dashed path, still following its angle. */}
+        {/* Nose points up-right, along the path toward St Lucia. */}
         <g transform="translate(186 56) rotate(-28)" opacity="0.95">
-          <path d="M-1.5 0 L11 0 L8.5 -2.2 L11 0 L8.5 2.2 Z" fill="currentColor" />
-          <path
-            d="M4 0 L7 -4.2 M4 0 L7 4.2"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
+          <g transform="rotate(180 4.75 0)">
+            <path d="M-1.5 0 L11 0 L8.5 -2.2 L11 0 L8.5 2.2 Z" fill="currentColor" />
+            <path
+              d="M4 0 L7 -4.2 M4 0 L7 4.2"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </g>
         </g>
       </svg>
     </div>

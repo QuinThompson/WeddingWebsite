@@ -5,7 +5,6 @@ import {
   Clock3,
   GlassWater,
   Heart,
-  PartyPopper,
   Sunrise,
   Wine,
   type LucideIcon,
@@ -20,13 +19,12 @@ const icons: Record<TimelineEvent["icon"], LucideIcon> = {
   ceremony: Church,
   cocktail: GlassWater,
   reception: Wine,
-  party: PartyPopper,
   brunch: Sunrise,
 };
 
 export function EventTimeline() {
   return (
-    <DetailPageShell title="Event Timeline" eyebrow="Weekend Itinerary">
+    <DetailPageShell title="Event Timeline">
       <ol className="relative space-y-0 pl-2">
         <div
           className="absolute bottom-4 left-[1.55rem] top-4 w-px bg-gradient-to-b from-lilac via-sage to-taupe"

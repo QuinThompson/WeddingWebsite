@@ -14,6 +14,12 @@ const REGISTRY_KEY = "wedding-registry-v1";
 export type StoredRsvp = {
   id: string;
   submittedAt: string;
+  invitationCode?: string;
+  household?: string;
+  allowedAdults?: string;
+  allowedChildren?: string;
+  plusOneAdults?: string;
+  plusOneChildren?: string;
   fullName: string;
   email: string;
   mobile: string;

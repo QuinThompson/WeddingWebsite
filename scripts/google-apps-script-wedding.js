@@ -4,6 +4,7 @@
  * ONE spreadsheet + ONE Drive folder + ONE web app deployment.
  *
  * Spreadsheet tabs (auto-created):
+ *   - Guests   (Code, Household, Allowed Adults, Allowed Children, Plus One)
  *   - RSVPs
  *   - Registry
  *   - Memories
@@ -25,6 +26,7 @@
 /** Paste the Drive folder ID (the long id in the folder URL). */
 var MEMORIES_FOLDER_ID = "1f_sTJnG7dxWW_GxSBzSjhFYN-D_dwp78";
 
+var GUESTS_SHEET = "Guests";
 var RSVP_SHEET = "RSVPs";
 var REGISTRY_SHEET = "Registry";
 var MEMORIES_SHEET = "Memories";
@@ -44,6 +46,20 @@ var RSVP_HEADERS = [
   "Child Count",
   "Adults Detail",
   "Children Detail",
+  "Invitation Code",
+  "Household",
+  "Allowed Adults",
+  "Allowed Children",
+  "Plus One Adults",
+  "Plus One Children",
+];
+
+var GUEST_HEADERS = [
+  "Code",
+  "Household",
+  "Allowed Adults",
+  "Allowed Children",
+  "Plus One",
 ];
 
 var REGISTRY_HEADERS = [
@@ -72,6 +88,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     var type = String(data.type || "");
 
+    if (type === "guest-lookup") return handleGuestLookup_(data);
     if (type === "rsvp") return handleRsvp_(data);
     if (type === "registry-list") return handleRegistryList_();
     if (type === "registry-seed") return handleRegistrySeed_(data);
@@ -92,6 +109,7 @@ function doGet(e) {
     if (type === "registry" || type === "registry-list") return handleRegistryList_();
     if (type === "memories" || type === "memories-list") return handleMemoriesList_();
     return json_({ ok: true, service: "wedding-google", types: [
+      "guest-lookup",
       "rsvp",
       "registry-list",
       "registry-seed",
@@ -107,7 +125,28 @@ function doGet(e) {
 
 /* ---------- RSVP ---------- */
 
+function handleGuestLookup_(data) {
+  var guest = findGuestByCode_(data.code);
+  if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
+  return json_({ ok: true, guest: guest });
+}
+
 function handleRsvp_(data) {
+  var guest = findGuestByCode_(data.invitationCode);
+  if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
+
+  var attending = String(data.attending || "");
+  var adultCount = attending === "yes" ? Number(data.adultCount || 0) : 0;
+  var childCount = attending === "yes" ? Number(data.childCount || 0) : 0;
+  var plusOneAdults = attending === "yes" ? Math.max(0, adultCount - guest.allowedAdults) : 0;
+  var plusOneChildren = attending === "yes" ? Math.max(0, childCount - guest.allowedChildren) : 0;
+  if (!guest.plusOneAllowed && (plusOneAdults > 0 || plusOneChildren > 0)) {
+    return json_({
+      ok: false,
+      error: "This invitation does not include a plus-one.",
+    });
+  }
+
   var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
   alignRsvpColumns_(sheet);
   sheet.appendRow([
@@ -116,7 +155,7 @@ function handleRsvp_(data) {
     data.fullName || "",
     data.email || "",
     data.mobile || "",
-    data.attending || "",
+    attending,
     data.guestCount || "",
     data.guestNames || "",
     data.hotelStatus || "",
@@ -125,8 +164,46 @@ function handleRsvp_(data) {
     data.childCount || "",
     data.adultsDetail || "",
     data.childrenDetail || "",
+    guest.code,
+    guest.household,
+    guest.allowedAdults,
+    guest.allowedChildren,
+    plusOneAdults,
+    plusOneChildren,
   ]);
   return json_({ ok: true, stored: "rsvp" });
+}
+
+function normalizeCode_(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function isYes_(value) {
+  var text = String(value || "").trim().toLowerCase();
+  return text === "yes" || text === "y" || text === "true" || text === "1";
+}
+
+function findGuestByCode_(code) {
+  var wanted = normalizeCode_(code);
+  if (!wanted) return null;
+
+  var sheet = getOrCreateSheet_(GUESTS_SHEET, GUEST_HEADERS);
+  ensureHeaders_(sheet, GUEST_HEADERS);
+  var last = sheet.getLastRow();
+  if (last < 2) return null;
+
+  var rows = sheet.getRange(2, 1, last - 1, GUEST_HEADERS.length).getValues();
+  for (var i = 0; i < rows.length; i++) {
+    if (normalizeCode_(rows[i][0]) !== wanted) continue;
+    return {
+      code: String(rows[i][0]).trim(),
+      household: String(rows[i][1] || "").trim() || "Your invitation",
+      allowedAdults: Math.max(0, Number(rows[i][2]) || 0),
+      allowedChildren: Math.max(0, Number(rows[i][3]) || 0),
+      plusOneAllowed: isYes_(rows[i][4]),
+    };
+  }
+  return null;
 }
 
 /* ---------- Registry ---------- */

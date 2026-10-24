@@ -5,6 +5,8 @@ import { DetailPageShell } from "@/components/DetailPageShell";
 import { wedding } from "@/data/wedding";
 import {
   buildRsvpPartyFields,
+  plusOneCounts,
+  type InvitationAllowance,
   type RsvpAdultGuest,
   type RsvpChildGuest,
   type RsvpPayload,
@@ -78,7 +80,7 @@ function validate(values: FormState): FormErrors {
   return errors;
 }
 
-function toPayload(values: FormState): RsvpPayload {
+function toPayload(values: FormState, invitation: InvitationAllowance): RsvpPayload {
   const adults =
     values.attending === "yes"
       ? values.adults.map((adult) => ({
@@ -111,7 +113,18 @@ function toPayload(values: FormState): RsvpPayload {
           childrenDetail: "",
         };
 
+  const plusOnes =
+    values.attending === "yes"
+      ? plusOneCounts(invitation, Number(party.adultCount), Number(party.childCount))
+      : { plusOneAdults: 0, plusOneChildren: 0 };
+
   return {
+    invitationCode: invitation.code,
+    household: invitation.household,
+    allowedAdults: String(invitation.allowedAdults),
+    allowedChildren: String(invitation.allowedChildren),
+    plusOneAdults: String(plusOnes.plusOneAdults),
+    plusOneChildren: String(plusOnes.plusOneChildren),
     fullName,
     email: values.email.trim(),
     mobile: values.mobile.trim(),
@@ -124,8 +137,24 @@ function toPayload(values: FormState): RsvpPayload {
   };
 }
 
-async function submitRsvp(values: FormState): Promise<void> {
-  const payload = toPayload(values);
+async function lookupInvitation(code: string): Promise<InvitationAllowance> {
+  const response = await fetch("/api/invitation", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  });
+  const data = (await response.json().catch(() => null)) as {
+    error?: string;
+    guest?: InvitationAllowance;
+  } | null;
+  if (!response.ok || !data?.guest) {
+    throw new Error(data?.error || "That invitation code was not found.");
+  }
+  return data.guest;
+}
+
+async function submitRsvp(values: FormState, invitation: InvitationAllowance): Promise<void> {
+  const payload = toPayload(values, invitation);
 
   const response = await fetch("/api/rsvp", {
     method: "POST",
@@ -155,10 +184,15 @@ export function RSVPForm() {
   const [values, setValues] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [notedPlusOne, setNotedPlusOne] = useState(false);
+  const [code, setCode] = useState("");
+  const [invitation, setInvitation] = useState<InvitationAllowance | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [lookupStatus, setLookupStatus] = useState<"idle" | "loading">("idle");
 
   const partyTotal =
     values.attending === "yes" ? 1 + values.adults.length + values.children.length : 0;
-  const hasAdditionalGuests = values.adults.length > 0 || values.children.length > 0;
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -169,13 +203,58 @@ export function RSVPForm() {
       return;
     }
 
+    if (!invitation) return;
+
+    if (
+      values.attending === "yes" &&
+      !invitation.plusOneAllowed &&
+      (1 + values.adults.length > invitation.allowedAdults ||
+        values.children.length > invitation.allowedChildren)
+    ) {
+      setSubmitError("This invitation does not include a plus-one.");
+      setStatus("error");
+      return;
+    }
+
+    const plusOnes =
+      values.attending === "yes"
+        ? plusOneCounts(
+            invitation,
+            1 + values.adults.length,
+            values.children.length,
+          )
+        : { plusOneAdults: 0, plusOneChildren: 0 };
+
     setStatus("loading");
+    setSubmitError(null);
     try {
-      await submitRsvp(values);
+      await submitRsvp(values, invitation);
+      setNotedPlusOne(plusOnes.plusOneAdults + plusOnes.plusOneChildren > 0);
       setStatus("success");
       setValues(initialState);
-    } catch {
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong while sending your RSVP. Please try again.",
+      );
       setStatus("error");
+    }
+  };
+
+  const onLookup = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLookupError(null);
+    setLookupStatus("loading");
+    try {
+      const guest = await lookupInvitation(code);
+      setInvitation(guest);
+      setStatus("idle");
+      setSubmitError(null);
+    } catch (err) {
+      setLookupError(
+        err instanceof Error ? err.message : "That invitation code was not found.",
+      );
+    } finally {
+      setLookupStatus("idle");
     }
   };
 
@@ -199,15 +278,93 @@ export function RSVPForm() {
     }));
   };
 
+  if (!invitation) {
+    return (
+      <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
+        <div className="paper-card relative overflow-hidden border border-lilac/35 p-5 sm:p-6">
+          <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
+          <div className="pl-3">
+            <p className="text-sm text-charcoal/75">
+              Enter the invitation code from your invite. Only guests on our list can RSVP.
+            </p>
+            <form className="mt-6 space-y-4" onSubmit={onLookup} noValidate>
+              <div>
+                <label
+                  className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
+                  htmlFor={`${formId}-code`}
+                >
+                  Invitation code
+                </label>
+                <input
+                  id={`${formId}-code`}
+                  className={inputClass(lookupError ? "code" : undefined)}
+                  value={code}
+                  onChange={(event) => setCode(event.target.value)}
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={lookupStatus === "loading" || !code.trim()}
+                className="inline-flex min-h-11 items-center justify-center rounded-sm bg-lilac-deep px-5 text-sm font-semibold uppercase tracking-[0.16em] text-paper disabled:opacity-70"
+              >
+                {lookupStatus === "loading" ? "Checking…" : "Continue"}
+              </button>
+              {lookupError ? (
+                <p className="text-sm text-[#8a3f3f]" role="alert">
+                  {lookupError}
+                </p>
+              ) : null}
+            </form>
+          </div>
+        </div>
+      </DetailPageShell>
+    );
+  }
+
+  const adultTotal = values.attending === "yes" ? 1 + values.adults.length : 0;
+  const childTotal = values.attending === "yes" ? values.children.length : 0;
+  const plusOnes =
+    values.attending === "yes"
+      ? plusOneCounts(invitation, adultTotal, childTotal)
+      : { plusOneAdults: 0, plusOneChildren: 0 };
+  const nextAdultIsPlusOne = values.adults.length + 2 > invitation.allowedAdults;
+  const nextChildIsPlusOne = values.children.length + 1 > invitation.allowedChildren;
+  const canAddAdult = invitation.plusOneAllowed || !nextAdultIsPlusOne;
+  const canAddChild = invitation.plusOneAllowed || !nextChildIsPlusOne;
+
   return (
     <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
       <div className="paper-card relative overflow-hidden border border-lilac/35 p-5 sm:p-6">
         <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
-        <p className="pl-3 text-sm text-charcoal/75">
-          Kindly reply by {wedding.deadlines.rsvpDisplay}. One person can RSVP for their whole
-          invited party—including a spouse and children listed on your invitation—so we have
-          everyone’s names and ages.
-        </p>
+        <div className="pl-3">
+          <p className="text-sm text-charcoal/75">
+            Kindly reply by {wedding.deadlines.rsvpDisplay}. This invitation is for{" "}
+            <span className="font-semibold text-charcoal">{invitation.household}</span>.
+          </p>
+          <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
+            Included with your invitation: {invitation.allowedAdults}{" "}
+            {invitation.allowedAdults === 1 ? "adult" : "adults"} and {invitation.allowedChildren}{" "}
+            {invitation.allowedChildren === 1 ? "child" : "children"}.
+            {invitation.plusOneAllowed
+              ? " This invitation may add plus-one adults or children beyond that, if you are willing to pay."
+              : " Plus-ones are not included on this invitation."}
+          </p>
+          <button
+            type="button"
+            className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+            onClick={() => {
+              setInvitation(null);
+              setValues(initialState);
+              setErrors({});
+              setStatus("idle");
+              setSubmitError(null);
+            }}
+          >
+            Use a different code
+          </button>
+        </div>
 
         <form className="relative mt-6 space-y-5 pl-3" onSubmit={onSubmit} noValidate>
           <section className="space-y-5">
@@ -306,30 +463,26 @@ export function RSVPForm() {
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
                     Additional adults
                   </h2>
-                  <button
-                    type="button"
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
-                    onClick={() =>
-                      setValues((current) => ({
-                        ...current,
-                        adults: [...current.adults, emptyAdult()],
-                      }))
-                    }
-                  >
-                    + Add adult
-                  </button>
+                  {canAddAdult ? (
+                    <button
+                      type="button"
+                      className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                      onClick={() =>
+                        setValues((current) => ({
+                          ...current,
+                          adults: [...current.adults, emptyAdult()],
+                        }))
+                      }
+                    >
+                      {nextAdultIsPlusOne ? "+ Add plus-one adult" : "+ Add adult"}
+                    </button>
+                  ) : null}
                 </div>
                 <p className="text-xs text-charcoal/65">
-                  Spouse, partner, or other adults named on your invitation (not including yourself).
+                  Other adults on this invitation, not including yourself. Anyone beyond the{" "}
+                  {invitation.allowedAdults} included {invitation.allowedAdults === 1 ? "adult" : "adults"} is
+                  a plus-one.
                 </p>
-                {hasAdditionalGuests ? (
-                  <p
-                    className="rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-xs leading-relaxed text-charcoal/85"
-                    role="note"
-                  >
-                    {wedding.rsvp.additionalGuestNotice}
-                  </p>
-                ) : null}
                 {values.adults.length === 0 ? (
                   <p className="text-sm text-taupe">No additional adults added.</p>
                 ) : (
@@ -341,7 +494,8 @@ export function RSVPForm() {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
-                            Adult {index + 1}
+                            Adult {index + 2}
+                            {index + 2 > invitation.allowedAdults ? " · Plus-one" : ""}
                           </p>
                           <button
                             type="button"
@@ -380,31 +534,26 @@ export function RSVPForm() {
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
                     Children
                   </h2>
-                  <button
-                    type="button"
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
-                    onClick={() =>
-                      setValues((current) => ({
-                        ...current,
-                        children: [...current.children, emptyChild()],
-                      }))
-                    }
-                  >
-                    + Add child
-                  </button>
+                  {canAddChild ? (
+                    <button
+                      type="button"
+                      className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                      onClick={() =>
+                        setValues((current) => ({
+                          ...current,
+                          children: [...current.children, emptyChild()],
+                        }))
+                      }
+                    >
+                      {nextChildIsPlusOne ? "+ Add plus-one child" : "+ Add child"}
+                    </button>
+                  ) : null}
                 </div>
                 <p className="text-xs text-charcoal/65">
-                  Include each child named on your invitation, with name and age, so we can plan
-                  seating.
+                  Children on this invitation, with name and age. Anyone beyond the{" "}
+                  {invitation.allowedChildren} included{" "}
+                  {invitation.allowedChildren === 1 ? "child" : "children"} is a plus-one.
                 </p>
-                {hasAdditionalGuests && values.adults.length === 0 ? (
-                  <p
-                    className="rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-xs leading-relaxed text-charcoal/85"
-                    role="note"
-                  >
-                    {wedding.rsvp.additionalGuestNotice}
-                  </p>
-                ) : null}
                 {values.children.length === 0 ? (
                   <p className="text-sm text-taupe">No children added.</p>
                 ) : (
@@ -417,6 +566,7 @@ export function RSVPForm() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
                             Child {index + 1}
+                            {index + 1 > invitation.allowedChildren ? " · Plus-one" : ""}
                           </p>
                           <button
                             type="button"
@@ -467,11 +617,20 @@ export function RSVPForm() {
 
               <p className="rounded-sm border border-lilac/25 bg-lilac/10 px-3 py-2 text-sm text-charcoal/80">
                 Party total: <span className="font-semibold">{partyTotal}</span>{" "}
-                {partyTotal === 1 ? "guest" : "guests"}
-                {values.children.length > 0
-                  ? ` (${1 + values.adults.length} adult${1 + values.adults.length === 1 ? "" : "s"}, ${values.children.length} child${values.children.length === 1 ? "" : "ren"})`
-                  : null}
+                {partyTotal === 1 ? "guest" : "guests"} ({adultTotal}{" "}
+                {adultTotal === 1 ? "adult" : "adults"}, {childTotal}{" "}
+                {childTotal === 1 ? "child" : "children"}). Plus-ones: {plusOnes.plusOneAdults}{" "}
+                {plusOnes.plusOneAdults === 1 ? "adult" : "adults"}, {plusOnes.plusOneChildren}{" "}
+                {plusOnes.plusOneChildren === 1 ? "child" : "children"}.
               </p>
+              {plusOnes.plusOneAdults + plusOnes.plusOneChildren > 0 ? (
+                <p
+                  className="rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85"
+                  role="note"
+                >
+                  {wedding.rsvp.additionalGuestNotice}
+                </p>
+              ) : null}
 
               <div>
                 <label
@@ -526,11 +685,14 @@ export function RSVPForm() {
             {status === "success" ? (
               <p className="text-sage-deep">
                 Thank you—your RSVP has been received. We can’t wait to celebrate with you.
+                {notedPlusOne
+                  ? ` Please pay for each plus-one by ${wedding.deadlines.rsvpDisplay}, or that plus-one will be canceled.`
+                  : ""}
               </p>
             ) : null}
-            {status === "error" ? (
+            {status === "error" && submitError ? (
               <p className="text-[#8a3f3f]" role="alert">
-                Something went wrong while sending your RSVP. Please try again.
+                {submitError}
               </p>
             ) : null}
           </div>

@@ -10,7 +10,7 @@ export type TimelineEvent = {
   time: string;
   venue: string;
   description: string;
-  icon: "arrival" | "welcome" | "ceremony" | "cocktail" | "reception" | "party" | "brunch";
+  icon: "arrival" | "welcome" | "ceremony" | "cocktail" | "reception" | "brunch";
 };
 
 export type PartyMember = {
@@ -84,12 +84,12 @@ export const wedding = {
     name: "Eternity Beach",
     address: "Eternity Beach, near Coconut Bay, Vieux Fort, St Lucia",
     description:
-      "Ceremony and reception both take place on Eternity Beach. Vows will be exchanged beside the Caribbean shoreline, then celebration continues in the same setting with cocktails, dinner, dancing.",
+      "Ceremony and reception both take place on Eternity Beach. Vows will be exchanged beside the Caribbean shoreline, then celebration continues in the same setting with cocktails, dinner, dancing, and a night to create memories.",
     image: "/images/eternity_beach.jpg",
     imageAlt: "Eternity Beach shoreline for the ceremony and reception",
     mapUrl: "https://maps.google.com/?q=Coconut+Bay+Beach+Resort+St+Lucia",
     arrivalGuidance:
-      "Please arrive by 3:30 PM so you can find your seat and enjoy a quiet moment before the ceremony begins at 4:00 PM. The ceremony is on the sand, so choose comfortable shoes you don't mind getting sandy.",
+      "Please arrive by 3:30 PM so you can find your seat and enjoy a quiet moment before the ceremony begins at 4:00 PM.",
     transportationNotes:
       "Resort shuttles and hotel transfers will be available from the Coconut Bay lobby. Walking paths to Eternity Beach are short and well marked.",
   },
@@ -227,34 +227,26 @@ export const wedding = {
   },
 
   attire: {
-    title: "Garden Formal by the Sea",
+    title: "Dress Your Best",
     explanation:
-      "Think refined resort elegance—breathable fabrics, soft movement, and colors that feel at home against lilac dusk and sage palms. Formal enough for vows, comfortable enough for sand and celebration.",
-    womenGuidance:
-      "Flowing midi or floor-length dresses, elevated jumpsuits, or tailored sets in airy fabrics. Soft sleeves, wrap silhouettes, and delicate jewelry suit the coastal setting.",
-    menGuidance:
-      "Lightweight suits, linen blends, or dress shirts with tailored trousers. Jackets are welcome for the ceremony and may be removed later as the evening warms.",
-    fabricClimate:
-      "St Lucia in May is warm and humid. Choose linen, cotton, chiffon, silk blends, and other breathable fabrics. Avoid heavy wool and overly structured layers.",
-    footwear:
-      "Block heels, wedges, dressy flats, or polished loafers work best. Stilettos and delicate thin heels struggle in grass and sand.",
-    womenImage: "/images/attire-women.jpg",
-    womenImageAlt: "Soft lilac and blush styling inspiration for women",
-    menImage: "/images/attire-men.jpg",
-    menImageAlt: "Sage and taupe styling inspiration for men",
+      "Please come dressed your best for our wedding by the sea. We would love to see you in something polished and comfortable, in the light browns below.",
     encouragedColors: [
-      { name: "Lilac", hex: "#B7A8CF" },
-      { name: "Sage", hex: "#A8B39A" },
-      { name: "Dusty Blue", hex: "#8FA7B8" },
-      { name: "Soft Blush", hex: "#E4C7C0" },
-      { name: "Taupe", hex: "#B8AA9C" },
-      { name: "Warm Neutral", hex: "#E7DFD2" },
+      { name: "Mocha", hex: "#C4A484" },
+      { name: "Beige", hex: "#E8DCC8" },
+      { name: "Caramel", hex: "#D4A574" },
+      { name: "Camel", hex: "#C8A878" },
+      { name: "Tan", hex: "#D2B48C" },
+      { name: "Sand", hex: "#E4D3B5" },
     ] as AttireColor[],
     avoidColors: [
-      { name: "Bright White", hex: "#FFFFFF" },
-      { name: "Ivory Bridal", hex: "#FFF8E7" },
-      { name: "Neon tones", hex: "#39FF14" },
-      { name: "Loud black graphics", hex: "#111111" },
+      { name: "White", hex: "#FFFFFF" },
+      { name: "Ivory", hex: "#FFFFF0" },
+      { name: "Cream", hex: "#FFF8E7" },
+      { name: "Off-White", hex: "#F7F4EF" },
+      { name: "Pearl", hex: "#F4F1EA" },
+      { name: "Lilac", hex: "#B7A8CF" },
+      { name: "Lavender", hex: "#C4B5D8" },
+      { name: "Deep Lilac", hex: "#78658F" },
     ] as AttireColor[],
   },
 
@@ -290,7 +282,7 @@ export const wedding = {
       id: "cocktail",
       title: "Cocktail Hour",
       date: "May 12, 2027",
-      time: "5:00 PM",
+      time: "4:30 PM",
       venue: "Eternity Beach",
       description: "Sunset drinks, light bites, and the first notes of the evening.",
       icon: "cocktail",
@@ -299,19 +291,10 @@ export const wedding = {
       id: "reception",
       title: "Reception",
       date: "May 12, 2027",
-      time: "6:30 PM",
+      time: "6:00 PM",
       venue: "Eternity Beach",
       description: "Dinner, toasts, and dancing under warm island light.",
       icon: "reception",
-    },
-    {
-      id: "after-party",
-      title: "After-Party",
-      date: "May 12, 2027",
-      time: "9:30 PM",
-      venue: "Beach Pavilion",
-      description: "Keep the celebration going with music and late-night cheer.",
-      icon: "party",
     },
     {
       id: "brunch",
@@ -330,7 +313,7 @@ export const wedding = {
       title: "Parents of the Couple",
       members: [
         { name: "Rebekah Clarke", role: "Mother of the Bride" },
-        { name: "Isaac Clarke", role: "Uncle" },
+        { name: "Isaac Clarke", role: "Uncle of the Bride" },
         { name: "Anna Millet", role: "Mother of the Groom" },
         { name: "Eldon Thompson", role: "Father of the Groom" },
       ],
@@ -427,7 +410,7 @@ export const wedding = {
     {
       id: "plus-one",
       title: "Plus-ones & additional guests",
-      body: "Our guest list is limited. Please RSVP only for the people named on your invitation. A plus-one is welcome only if they are listed. Anyone not on the original invite must be approved by us first. Additional guests cover a per-person fee for the ceremony and reception: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change.",
+      body: "Your invitation includes a set number of adults and children. If your invitation allows a plus-one, you may add a plus-one adult or child if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
     },
     {
       id: "dress-code",
@@ -537,7 +520,7 @@ export const wedding = {
     recommendedAirport:
       "Hewanorra International Airport (UVF) is recommended because it is the closest airport to Coconut Bay. George F. L. Charles Airport (SLU) is an alternate.",
     airportTransfers:
-      "Coconut Bay is a short transfer from UVF. If you are staying at Coconut Bay, free transfers are included for arrivals at UVF—share your flight details with the resort reservations team so they can coordinate your arrival. Arrivals via SLU are a longer drive to the resort on the south of the island, so those guests will need to arrange their own transfer.",
+      "If you are staying at Coconut Bay, free transfers are included for arrivals at UVF—share your flight details with the resort reservations team so they can coordinate your arrival. Arrivals via SLU are a longer drive to the resort on the south of the island, so those guests will need to arrange their own transfer.",
     hotel:
       "Coconut Bay Beach Resort & Spa is our recommended stay for the wedding weekend—close to ceremony and reception settings, with beach access and guest services on site. Splash is family-friendly. Harmony is adults-only (18+). Serenity at Coconut Bay is a couples-only option on the same property: private plunge-pool suites, with full use of the resort.",
     bookingInstructions:
@@ -584,7 +567,7 @@ export const wedding = {
     {
       question: "Can I bring a plus-one?",
       answer:
-        "Our guest list is limited, so invitations are for named guests only. A plus-one is welcome only if they appear on your invitation. If you’d like to bring someone who wasn’t originally invited, please contact us first—additional guests require our approval and a per-person guest fee for the ceremony and reception: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change.",
+        "Your invitation includes a set number of adults and children. If your invitation allows a plus-one, you may add a plus-one adult or child if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
     },
     {
       question: "What about gifts?",
@@ -615,7 +598,7 @@ export const wedding = {
       { value: "no", label: "Unable to attend" },
     ],
     additionalGuestNotice:
-      "Our guest list is limited. Please only add people named on your invitation. Anyone not on the original invite must be approved by us first and covers a per-person guest fee for the ceremony and reception: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change.",
+      "If your invitation allows a plus-one, you may add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Plus-one payment is due by January 31, 2027. If payment is not received by that date, the plus-one will be canceled.",
   },
 
   memories: {

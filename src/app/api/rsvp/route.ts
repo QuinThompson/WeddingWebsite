@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const payload = normalizeRsvpPayload(json);
   if (!payload) {
     return NextResponse.json(
-      { error: "Missing or invalid RSVP fields (name, email, mobile, attending)." },
+      { error: "Missing or invalid RSVP fields (invitation code, name, email, mobile, attending)." },
       { status: 400 },
     );
   }
@@ -34,13 +34,10 @@ export async function POST(request: Request) {
   const webhookUrl = getGoogleAppsScriptUrl("rsvp");
 
   if (!webhookUrl) {
-    return NextResponse.json({
-      ok: true,
-      stored: "local-only",
-      id: record.id,
-      message:
-        "RSVP accepted locally. Set GOOGLE_APPS_SCRIPT_URL to write to Google Sheets.",
-    });
+    return NextResponse.json(
+      { error: "RSVPs can’t be saved right now. Please try again later." },
+      { status: 503 },
+    );
   }
 
   const result = await postToGoogleAppsScript(webhookUrl, {
@@ -56,6 +53,14 @@ export async function POST(request: Request) {
         details: process.env.NODE_ENV === "development" ? result.body : undefined,
       },
       { status: 502 },
+    );
+  }
+
+  const saved = result.data as { ok?: boolean; error?: string } | null;
+  if (saved && saved.ok === false) {
+    return NextResponse.json(
+      { error: saved.error || "That invitation code was not found." },
+      { status: 400 },
     );
   }
 

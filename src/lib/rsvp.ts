@@ -7,8 +7,34 @@ export type RsvpChildGuest = {
   age: string;
 };
 
+export type InvitationAllowance = {
+  code: string;
+  household: string;
+  allowedAdults: number;
+  allowedChildren: number;
+  /** Yes on the Guests sheet means this invitation may add paid plus-ones. */
+  plusOneAllowed: boolean;
+};
+
+export function plusOneCounts(
+  allowance: Pick<InvitationAllowance, "allowedAdults" | "allowedChildren">,
+  adultCount: number,
+  childCount: number,
+) {
+  return {
+    plusOneAdults: Math.max(0, adultCount - allowance.allowedAdults),
+    plusOneChildren: Math.max(0, childCount - allowance.allowedChildren),
+  };
+}
+
 export type RsvpPayload = {
   /** Contact / primary guest submitting the RSVP */
+  invitationCode: string;
+  household: string;
+  allowedAdults: string;
+  allowedChildren: string;
+  plusOneAdults: string;
+  plusOneChildren: string;
   fullName: string;
   email: string;
   mobile: string;
@@ -111,12 +137,13 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
   if (!raw || typeof raw !== "object") return null;
   const body = raw as Record<string, unknown>;
 
+  const invitationCode = String(body.invitationCode ?? "").trim();
   const fullName = String(body.fullName ?? "").trim();
   const email = String(body.email ?? "").trim();
   const mobile = String(body.mobile ?? "").trim();
   const attending = body.attending === "no" ? "no" : body.attending === "yes" ? "yes" : "";
 
-  if (!fullName || !email || !mobile || !attending) return null;
+  if (!invitationCode || !fullName || !email || !mobile || !attending) return null;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
 
   const adults = attending === "yes" ? parseAdults(body.adults) : [];
@@ -138,7 +165,24 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
           childrenDetail: "",
         };
 
+  const allowedAdults = Math.max(0, Number(body.allowedAdults) || 0);
+  const allowedChildren = Math.max(0, Number(body.allowedChildren) || 0);
+  const plusOnes =
+    attending === "yes"
+      ? plusOneCounts(
+          { allowedAdults, allowedChildren },
+          Number(party.adultCount) || 0,
+          Number(party.childCount) || 0,
+        )
+      : { plusOneAdults: 0, plusOneChildren: 0 };
+
   return {
+    invitationCode,
+    household: String(body.household ?? "").trim(),
+    allowedAdults: String(allowedAdults),
+    allowedChildren: String(allowedChildren),
+    plusOneAdults: String(plusOnes.plusOneAdults),
+    plusOneChildren: String(plusOnes.plusOneChildren),
     fullName,
     email,
     mobile,

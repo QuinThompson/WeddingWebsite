@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { DetailPageShell } from "@/components/DetailPageShell";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
@@ -24,50 +23,6 @@ export function AttireGuide() {
       <ScrollReveal className="paper-card border border-taupe/30 p-5 sm:p-6">
         <h2 className="display text-3xl text-lilac-deep">{attire.title}</h2>
         <p className="mt-3 text-sm leading-relaxed text-charcoal/85">{attire.explanation}</p>
-      </ScrollReveal>
-
-      <div className="mt-8 grid gap-6 sm:grid-cols-2">
-        <ScrollReveal>
-          <div className="relative aspect-[3/4] overflow-hidden bg-taupe/15">
-            <Image
-              src={attire.womenImage}
-              alt={attire.womenImageAlt}
-              fill
-              sizes="(max-width: 640px) 100vw, 26rem"
-              className="object-cover"
-            />
-          </div>
-          <h3 className="display mt-4 text-2xl">For Women</h3>
-          <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{attire.womenGuidance}</p>
-        </ScrollReveal>
-        <ScrollReveal delay={0.08}>
-          <div className="relative aspect-[3/4] overflow-hidden bg-taupe/15">
-            <Image
-              src={attire.menImage}
-              alt={attire.menImageAlt}
-              fill
-              sizes="(max-width: 640px) 100vw, 26rem"
-              className="object-cover"
-            />
-          </div>
-          <h3 className="display mt-4 text-2xl">For Men</h3>
-          <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{attire.menGuidance}</p>
-        </ScrollReveal>
-      </div>
-
-      <ScrollReveal className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="paper-card border border-taupe/30 p-5">
-          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-taupe">
-            Fabric & Climate
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed">{attire.fabricClimate}</p>
-        </div>
-        <div className="paper-card border border-taupe/30 p-5">
-          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-taupe">
-            Footwear
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed">{attire.footwear}</p>
-        </div>
       </ScrollReveal>
 
       <ScrollReveal className="mt-10">
