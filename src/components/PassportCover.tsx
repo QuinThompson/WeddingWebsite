@@ -58,7 +58,7 @@ export function PassportCover({
         <PassportDestinationStamp
           destination={wedding.destination.display}
           date={wedding.date.shortDisplay}
-          className={isHero ? "h-[5.25rem] w-[5.25rem] sm:h-[5.75rem] sm:w-[5.75rem]" : "h-11 w-11"}
+          className={isHero ? "h-[7rem] w-[7rem] sm:h-[7.75rem] sm:w-[7.75rem]" : "h-11 w-11"}
         />
 
         <div>

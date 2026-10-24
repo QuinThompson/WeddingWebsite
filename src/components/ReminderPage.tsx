@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DetailPageShell } from "@/components/DetailPageShell";
+import { LinkedText } from "@/components/LinkedText";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
 
@@ -16,7 +17,9 @@ export function ReminderPage() {
             >
               <h2 className="display text-2xl text-lilac-deep">{reminder.title}</h2>
               {reminder.body ? (
-                <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{reminder.body}</p>
+                <p className="mt-2 text-sm leading-relaxed text-charcoal/85">
+                  <LinkedText text={reminder.body} />
+                </p>
               ) : null}
               {reminder.href && reminder.linkLabel ? (
                 <p className="mt-3">

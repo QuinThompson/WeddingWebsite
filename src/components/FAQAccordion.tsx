@@ -3,6 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { LinkedText } from "@/components/LinkedText";
 import type { FaqItem } from "@/data/wedding";
 import { cx } from "@/lib/utils";
 
@@ -44,7 +45,11 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
             >
               <div className="overflow-hidden">
                 <div className="px-4 pb-4 text-sm leading-relaxed text-charcoal/80">
-                  {item.answer ? <p>{item.answer}</p> : null}
+                  {item.answer ? (
+                    <p>
+                      <LinkedText text={item.answer} />
+                    </p>
+                  ) : null}
                   {item.href && item.linkLabel ? (
                     <p className={item.answer ? "mt-3" : undefined}>
                       <Link

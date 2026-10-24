@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DetailPageShell } from "@/components/DetailPageShell";
+import { LinkedText } from "@/components/LinkedText";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
 
@@ -32,7 +33,9 @@ export function DestinationGuide() {
       </Section>
       <Section title="Hotel">
         <p>{guide.hotel}</p>
-        <p className="mt-3">{guide.bookingInstructions}</p>
+        <p className="mt-3">
+          <LinkedText text={guide.bookingInstructions} />
+        </p>
         <Link
           href={wedding.hotel.bookingUrl}
           target="_blank"
@@ -45,34 +48,7 @@ export function DestinationGuide() {
 
       <Section title="Wedding questions">
         <p>
-          For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at{" "}
-          <a
-            href="mailto:weddings@cbayna.com"
-            className="text-lilac-deep underline underline-offset-4"
-          >
-            weddings@cbayna.com
-          </a>{" "}
-          and mention Shenice & Quinton’s wedding (May 12, 2027). For room reservations, email{" "}
-          <a
-            href="mailto:reservations@cbayresort.com"
-            className="text-lilac-deep underline underline-offset-4"
-          >
-            reservations@cbayresort.com
-          </a>
-          , call{" "}
-          <a href="tel:+18772520304" className="text-lilac-deep underline underline-offset-4">
-            877-252-0304
-          </a>
-          , or visit{" "}
-          <a
-            href="https://www.cbayresort.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-lilac-deep underline underline-offset-4"
-          >
-            www.cbayresort.com
-          </a>
-          .
+          <LinkedText text="For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com and mention Shenice & Quinton’s wedding (May 12, 2027)." />
         </p>
       </Section>
     </DetailPageShell>
