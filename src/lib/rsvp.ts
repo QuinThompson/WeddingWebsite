@@ -10,6 +10,8 @@ export type RsvpChildGuest = {
 export type InvitationAllowance = {
   code: string;
   household: string;
+  /** Person's name when we already have it from their RSVP or household. */
+  name?: string;
   allowedAdults: number;
   allowedChildren: number;
   /**
@@ -69,6 +71,7 @@ export type RsvpPayload = {
   mobile: string;
   attending: "yes" | "no";
   hotelStatus: string;
+  dietaryRestrictions: string;
   message: string;
   /** Additional adults (spouse, etc.) — not including the primary */
   adults: RsvpAdultGuest[];
@@ -226,6 +229,8 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
     mobile,
     attending,
     hotelStatus: attending === "yes" ? String(body.hotelStatus ?? "").trim() : "",
+    dietaryRestrictions:
+      attending === "yes" ? String(body.dietaryRestrictions ?? "").trim() : "",
     message: String(body.message ?? "").trim(),
     adults,
     children,

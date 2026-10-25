@@ -21,6 +21,7 @@ type FormState = {
   mobile: string;
   attending: "yes" | "no" | "";
   hotelStatus: string;
+  dietaryRestrictions: string;
   message: string;
   adults: RsvpAdultGuest[];
   children: RsvpChildGuest[];
@@ -40,12 +41,20 @@ const emptyChild = (): RsvpChildGuest => ({
   age: "",
 });
 
+/** "Brandon Thompson, Niki" becomes "Brandon Thompson". */
+function firstListedName(household: string) {
+  const name = household.split(",")[0]?.trim() ?? "";
+  if (!name || name === "Your invitation") return "";
+  return name;
+}
+
 const initialState: FormState = {
   fullName: "",
   email: "",
   mobile: "",
   attending: "",
   hotelStatus: "",
+  dietaryRestrictions: "",
   message: "",
   adults: [],
   children: [],
@@ -131,6 +140,7 @@ function toPayload(values: FormState, invitation: InvitationAllowance): RsvpPayl
     mobile: values.mobile.trim(),
     attending: values.attending === "no" ? "no" : "yes",
     hotelStatus: values.attending === "yes" ? values.hotelStatus : "",
+    dietaryRestrictions: values.attending === "yes" ? values.dietaryRestrictions.trim() : "",
     message: values.message.trim(),
     adults,
     children,
@@ -238,6 +248,10 @@ export function RSVPForm() {
     try {
       const result = await lookupInvitation(code);
       setInvitation(result.guest);
+      setValues((current) => ({
+        ...current,
+        fullName: firstListedName(result.guest.household),
+      }));
       setAlreadyResponded(result.alreadyResponded);
       setStatus("idle");
       setSubmitError(null);
@@ -691,6 +705,23 @@ export function RSVPForm() {
                   ))}
                 </select>
                 <FieldError id={`${formId}-hotel-error`} message={errors.hotelStatus} />
+              </div>
+
+              <div>
+                <label
+                  className="text-xs font-semibold uppercase tracking-[0.14em] text-taupe"
+                  htmlFor={`${formId}-dietary`}
+                >
+                  Dietary restrictions
+                </label>
+                <textarea
+                  id={`${formId}-dietary`}
+                  className={inputClass()}
+                  rows={3}
+                  value={values.dietaryRestrictions}
+                  onChange={(e) => set("dietaryRestrictions")(e.target.value)}
+                  placeholder="Optional. Allergies or meals we should know about for your party."
+                />
               </div>
             </>
           ) : null}

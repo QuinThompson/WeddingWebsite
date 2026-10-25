@@ -6,6 +6,7 @@
  * Spreadsheet tabs (auto-created):
  *   - Guests   (Code, Household, Allowed Adults, Allowed Children, Plus One)
  *   - RSVPs
+ *   - Questions
  *   - Registry
  *   - Memories
  *
@@ -28,6 +29,7 @@ var MEMORIES_FOLDER_ID = "1f_sTJnG7dxWW_GxSBzSjhFYN-D_dwp78";
 
 var GUESTS_SHEET = "Guests";
 var RSVP_SHEET = "RSVPs";
+var QUESTIONS_SHEET = "Questions";
 var REGISTRY_SHEET = "Registry";
 var MEMORIES_SHEET = "Memories";
 
@@ -54,6 +56,16 @@ var RSVP_HEADERS = [
   "Plus One Children",
   "Paid Plus One Adults",
   "Paid Plus One Children",
+  "Dietary Restrictions",
+];
+
+var QUESTION_HEADERS = [
+  "Submitted At",
+  "Invitation Code",
+  "Household",
+  "Name",
+  "Question",
+  "WhatsApp",
 ];
 
 var GUEST_HEADERS = [
@@ -92,6 +104,7 @@ function doPost(e) {
 
     if (type === "guest-lookup") return handleGuestLookup_(data);
     if (type === "rsvp") return handleRsvp_(data);
+    if (type === "question") return handleQuestion_(data);
     if (type === "registry-list") return handleRegistryList_();
     if (type === "registry-seed") return handleRegistrySeed_(data);
     if (type === "registry-claim") return handleRegistryClaim_(data);
@@ -115,6 +128,7 @@ function doGet(e) {
     return json_({ ok: true, service: "wedding-google", types: [
       "guest-lookup",
       "rsvp",
+      "question",
       "registry-list",
       "registry-seed",
       "registry-claim",
@@ -136,11 +150,38 @@ function handleGuestLookup_(data) {
   var found = findGuestByCode_(data.code);
   if (found.error) return json_({ ok: false, error: found.error });
   if (!found.guest) return json_({ ok: false, error: "That invitation code was not found." });
+  var guest = found.guest;
+  guest.name = rsvpNameForCode_(guest.code) || guest.household;
   return json_({
     ok: true,
-    guest: found.guest,
-    alreadyResponded: hasRsvpForCode_(found.guest.code),
+    guest: guest,
+    alreadyResponded: hasRsvpForCode_(guest.code),
   });
+}
+
+/** Full name from the latest RSVP for this code, when one has been submitted. */
+function rsvpNameForCode_(code) {
+  var wanted = normalizeCode_(code);
+  if (!wanted) return "";
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) return "";
+  var sheet = ss.getSheetByName(RSVP_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) return "";
+
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var values = sheet.getRange(1, 1, sheet.getLastRow(), lastCol).getValues();
+  var header = values[0];
+  var codeCol = headerIndex_(header, "Invitation Code");
+  var nameCol = headerIndex_(header, "Full Name");
+  if (codeCol < 0 || nameCol < 0) return "";
+
+  for (var i = values.length - 1; i >= 1; i--) {
+    if (normalizeCode_(values[i][codeCol]) !== wanted) continue;
+    var name = String(values[i][nameCol] || "").trim();
+    if (name) return name;
+  }
+  return "";
 }
 
 function handleRsvp_(data) {
@@ -195,12 +236,38 @@ function handleRsvp_(data) {
       plusOneChildren,
       paidPlusOneAdults,
       paidPlusOneChildren,
+      data.dietaryRestrictions || "",
     ]);
     SpreadsheetApp.flush();
     return json_({ ok: true, stored: "rsvp" });
   } finally {
     lock.releaseLock();
   }
+}
+
+function handleQuestion_(data) {
+  var found = findGuestByCode_(data.invitationCode);
+  if (found.error) return json_({ ok: false, error: found.error });
+  if (!found.guest) return json_({ ok: false, error: "That invitation code was not found." });
+
+  var name = String(data.name || "").trim();
+  var question = String(data.question || "").trim();
+  var whatsapp = String(data.whatsapp || "").trim();
+  if (!name) return json_({ ok: false, error: "Please enter your name." });
+  if (!question) return json_({ ok: false, error: "Please enter your question." });
+  if (!whatsapp) return json_({ ok: false, error: "Please enter your WhatsApp number." });
+
+  var sheet = getOrCreateSheet_(QUESTIONS_SHEET, QUESTION_HEADERS);
+  ensureHeaders_(sheet, QUESTION_HEADERS);
+  sheet.appendRow([
+    data.submittedAt || new Date().toISOString(),
+    found.guest.code,
+    found.guest.household,
+    name,
+    question,
+    whatsapp,
+  ]);
+  return json_({ ok: true, stored: "question" });
 }
 
 /** True when the RSVPs tab already has a row for this invitation code. */

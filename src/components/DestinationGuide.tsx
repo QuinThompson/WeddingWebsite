@@ -46,11 +46,11 @@ export function DestinationGuide() {
         </Link>
       </Section>
 
-      <Section title="Wedding questions">
+      {/* <Section title="Wedding questions">
         <p>
           <LinkedText text="For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com and mention Shenice & Quinton’s wedding (May 12, 2027)." />
         </p>
-      </Section>
+      </Section> */}
     </DetailPageShell>
   );
 }

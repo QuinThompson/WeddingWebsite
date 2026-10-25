@@ -27,6 +27,7 @@ export type StoredRsvp = {
   guestCount: string;
   guestNames: string;
   hotelStatus: string;
+  dietaryRestrictions?: string;
   message: string;
   adultCount?: string;
   childCount?: string;

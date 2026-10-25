@@ -48,7 +48,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
               <dd className="font-medium">{wedding.travel.recommendedArrivalDisplay}</dd>
             </div>
             <div className="min-w-0">
-              <dt className="uppercase tracking-[0.12em] text-taupe">Hotel</dt>
+              <dt className="uppercase tracking-[0.12em] text-taupe">Venue</dt>
               <dd className="break-words font-medium">{wedding.hotel.name}</dd>
             </div>
             <div>
@@ -56,7 +56,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
               <dd className="font-medium">{wedding.hotel.bookingDeadlineDisplay}</dd>
             </div>
             <div className="col-span-2">
-              <dt className="uppercase tracking-[0.12em] text-taupe">Country</dt>
+              <dt className="uppercase tracking-[0.12em] text-taupe">Destination</dt>
               <dd className="font-medium">{wedding.destination.display}</dd>
             </div>
           </dl>

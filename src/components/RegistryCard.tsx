@@ -37,7 +37,7 @@ export function RegistryCard({ className, rotate = 3 }: RegistryCardProps) {
   return (
     <DashboardNavLink
       href="/invite/registry"
-      ariaLabel={`${wedding.dashboard.registryTagEyebrow} ${wedding.dashboard.registryTagTitle}. ${wedding.dashboard.registryTagBody} ${wedding.dashboard.registryTagCta}`}
+      ariaLabel={`${wedding.dashboard.registryTagEyebrow} ${wedding.dashboard.registryTagTitle}. ${wedding.dashboard.registryTagCta}`}
       style={{ transform: `rotate(${rotate}deg)` }}
       className={cx(
         "paper-card relative block w-[6.1rem] rounded-sm border border-taupe/30 p-1.5 pb-2 text-center shadow-[0_10px_22px_rgba(52,50,56,0.12)] transition-transform duration-300 focus-visible:outline-none",
@@ -46,12 +46,12 @@ export function RegistryCard({ className, rotate = 3 }: RegistryCardProps) {
         className,
       )}
     >
-      <div className="flex aspect-[4/5] w-full flex-col items-center justify-between overflow-hidden bg-paper px-0.5 py-1">
+      <div className="flex aspect-[4/5] w-full flex-col items-center justify-between overflow-hidden bg-paper px-px py-1">
         <div className="relative h-[1.85rem] w-full">
           <GiftSprig className="absolute left-0 top-1" />
           <GiftSprig flip className="absolute right-0 top-1" />
-          <span className="absolute left-1/2 top-0 flex h-[1.65rem] w-[1.65rem] -translate-x-1/2 items-center justify-center rounded-full bg-[#efe6f4]">
-            <Gift className="h-3 w-3 text-lilac-deep" strokeWidth={1.6} aria-hidden />
+          <span className="absolute left-1/2 top-0 flex h-[1.85rem] w-[1.85rem] -translate-x-1/2 items-center justify-center rounded-full bg-[#efe6f4]">
+            <Gift className="h-3.5 w-3.5 text-lilac-deep" strokeWidth={1.6} aria-hidden />
           </span>
           <Heart
             className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 text-lilac-deep/75"
@@ -61,21 +61,15 @@ export function RegistryCard({ className, rotate = 3 }: RegistryCardProps) {
         </div>
 
         <div>
-          <p className="text-[0.38rem] font-medium uppercase tracking-[0.16em] text-lilac-deep">
+          <p className="text-[0.62rem] font-medium uppercase tracking-[0.08em] text-lilac-deep">
             {wedding.dashboard.registryTagEyebrow}
           </p>
-          <p className="handwritten text-[1.15rem] leading-none text-lilac-deep">
+          <p className="handwritten text-[1.65rem] leading-none text-lilac-deep">
             {wedding.dashboard.registryTagTitle}
           </p>
         </div>
 
-        <p className="display px-0.5 text-[0.42rem] leading-[1.15] text-charcoal/85">
-          {wedding.dashboard.registryTagBody}
-        </p>
-
-        <span className="flex w-full items-center justify-center gap-0.5 rounded-full bg-lilac-deep px-1 py-1 text-[0.32rem] font-semibold uppercase tracking-[0.04em] text-paper shadow-[0_4px_8px_rgba(120,101,143,0.28)]">
-          <Gift className="h-2 w-2 shrink-0" strokeWidth={1.7} aria-hidden />
-          <span className="h-2 w-px shrink-0 bg-paper/75" aria-hidden />
+        <span className="flex w-full items-center justify-center gap-1 rounded-full bg-lilac-deep px-0.5 py-1 text-[0.42rem] font-semibold uppercase tracking-normal text-paper shadow-[0_4px_8px_rgba(120,101,143,0.28)] min-[390px]:text-[0.46rem] sm:text-[0.5rem]">
           <span className="truncate">{wedding.dashboard.registryTagCta}</span>
           <ArrowRight className="h-2 w-2 shrink-0" aria-hidden />
         </span>

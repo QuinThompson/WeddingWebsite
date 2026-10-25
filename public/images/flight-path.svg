@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="194" viewBox="0 0 620 194" fill="none">
+<g stroke="#85699B" stroke-width="2.8" stroke-dasharray="5 8" stroke-linecap="round" opacity="0.89">
+<path d="M12 178 C80 80 153 97 228 80 C260 71 275 70 299 76 C320 81 342 103 365 92 C380 85 394 67 396 47 C398 20 366 14 355 35 C347 16 319 18 320 48 C322 74 354 91 386 102 C439 123 466 122 517 96"/>
+</g>
+<g fill="#947BA6"><circle cx="12" cy="178" r="6"/><circle cx="517" cy="96" r="6"/></g>
+<!-- Airplane points along the flight path toward St. Lucia; rotated to match the route tangent. -->
+<g transform="translate(207 84) rotate(73)">
+<path fill="#80648F" d="M-3,-33 C-3,-38 3,-38 3,-33 L7,-10 L31,7 C35,10 33,15 28,14 L5,7 L5,24 L13,32 L13,36 L0,31 L-13,36 L-13,32 L-5,24 L-5,7 L-28,14 C-33,15 -35,10 -31,7 L-7,-10 Z"/>
+</g></svg>

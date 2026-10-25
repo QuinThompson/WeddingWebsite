@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DetailPageShell } from "@/components/DetailPageShell";
+import { GuestQuestionCard } from "@/components/GuestQuestionCard";
 import { LinkedText } from "@/components/LinkedText";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
@@ -35,6 +36,7 @@ export function ReminderPage() {
           </ScrollReveal>
         ))}
       </div>
+      <GuestQuestionCard />
     </DetailPageShell>
   );
 }
