@@ -368,8 +368,8 @@ export const wedding = {
       title: "How We Met",
       handwrittenLabel: "chapter one",
       body: "It started on Facebook, with messages that turned into conversations, then into something we both wanted to keep going. We met in person at Shenice’s school on one of her sports days, and that was where friendship settled into something more. From there, we grew into a relationship that felt natural, steady, and ours.",
-      image: "/images/couple-story-01.jpg",
-      imageAlt: "Portrait recalling how Shenice and Quinton first connected",
+      image: "/images/how_we_met.png",
+      imageAlt: "Phones on a bench at a sports day, where Shenice and Quinton first met",
       imageSide: "left",
     },
     {
@@ -386,8 +386,8 @@ export const wedding = {
       title: "Jupiter",
       handwrittenLabel: "our daughter",
       body: "Jupiter is our daughter. She belongs in this story beside the two of us, the reason home feels full, and the reason this wedding is a family celebration, not only a couple’s.",
-      image: "/images/couple-cover.jpg",
-      imageAlt: "Portrait of Shenice and Quinton",
+      image: "/images/ultrasound.png",
+      imageAlt: "Ultrasound of Jupiter before she was born",
       imageSide: "left",
     },
     {
@@ -418,8 +418,8 @@ export const wedding = {
     },
     {
       id: "plus-one",
-      title: "Plus-ones & additional guests",
-      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+      title: "Plus-ones",
+      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       id: "dress-code",
@@ -434,19 +434,9 @@ export const wedding = {
       body: "The Eastern Caribbean dollar (XCD) is local currency; USD is widely accepted. Cards are common at resorts; keep some cash for smaller vendors.",
     },
     {
-      id: "weather",
-      title: "Weather Expectations",
-      body: "For guests staying at Coconut Bay: May is typically warm with occasional brief showers. Pack a light cover-up for the breeze and air-conditioned spaces.",
-    },
-    {
-      id: "travel-tips",
-      title: "Travel Tips",
-      body: "Keep digital and paper copies of travel documents. Pack reef-safe sunscreen and insect repellent. Build buffer time between landing and wedding events. Download offline maps before exploring beyond the resort.",
-    },
-    {
       id: "arrival-time",
       title: "Ceremony Arrival Time",
-      body: "Please be seated by 3:45 PM. The ceremony begins promptly at 4:00 PM.",
+      body: "Please arrive by 3:30 PM. Be seated by 3:45 PM. The ceremony begins promptly at 4:00 PM.",
     },
     {
       id: "photos",
@@ -557,11 +547,6 @@ export const wedding = {
         "UVF (Hewanorra) is recommended for its proximity to Coconut Bay. SLU is an alternate option with a longer transfer.",
     },
     {
-      question: "Any travel tips?",
-      answer:
-        "Keep digital and paper copies of travel documents. Pack reef-safe sunscreen and insect repellent. Build buffer time between landing and wedding events. Download offline maps before exploring beyond the resort.",
-    },
-    {
       question: "Can we take photos?",
       answer:
         "Yes. Photos are welcome during the ceremony, and you can share them in our Memories gallery.",
@@ -571,7 +556,7 @@ export const wedding = {
     {
       question: "Can I bring a plus-one?",
       answer:
-        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       question: "What about gifts?",
@@ -603,7 +588,7 @@ export const wedding = {
       { value: "no", label: "Unable to attend" },
     ],
     additionalGuestNotice:
-      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
   },
 
   memories: {

@@ -66,7 +66,7 @@ export function BoardingPass({ className, compact = false }: BoardingPassProps) 
         </div>
         <div>
           <dt className="uppercase tracking-[0.14em] text-taupe">Book by</dt>
-          <dd className="mt-1 font-medium">{wedding.hotel.bookingDeadlineDisplay}</dd>
+          <dd className="mt-1 font-bold">{wedding.hotel.bookingDeadlineDisplay}</dd>
         </div>
         <div>
           <dt className="uppercase tracking-[0.14em] text-taupe">Reserve</dt>

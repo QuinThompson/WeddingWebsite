@@ -53,7 +53,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
             </div>
             <div>
               <dt className="uppercase tracking-[0.12em] text-taupe">Book by</dt>
-              <dd className="font-medium">{wedding.hotel.bookingDeadlineDisplay}</dd>
+              <dd className="font-bold">{wedding.hotel.bookingDeadlineDisplay}</dd>
             </div>
             <div className="col-span-2">
               <dt className="uppercase tracking-[0.12em] text-taupe">Country</dt>
@@ -96,7 +96,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
             <p className="mt-1.5 text-[0.72rem] font-medium leading-snug text-charcoal">
               {wedding.dashboard.rsvpPrompt}
               <br />
-              {wedding.deadlines.rsvpDisplay}
+              <span className="font-bold">{wedding.deadlines.rsvpDisplay}</span>
             </p>
             <DashboardNavLink
               href="/invite/rsvp"

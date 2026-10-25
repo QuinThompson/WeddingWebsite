@@ -322,7 +322,7 @@ export function RSVPForm() {
         <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
         <div className="pl-3">
           <p className="text-sm text-charcoal/75">
-            Kindly reply by {wedding.deadlines.rsvpDisplay}. This invitation is for{" "}
+            Kindly reply by <span className="font-bold text-charcoal">{wedding.deadlines.rsvpDisplay}</span>. This invitation is for{" "}
             <span className="font-semibold text-charcoal">{invitation.household}</span>.
           </p>
           <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
@@ -333,7 +333,9 @@ export function RSVPForm() {
             {invitation.plusOneAllowed
               ? " One additional guest is included. A further guest is welcome at your own expense."
               : " You’re welcome to bring an additional guest at your own expense."}{" "}
-            Payment is due by {wedding.deadlines.guestPaymentDisplay}, or their spot will be canceled.
+            Payment is due by{" "}
+            <span className="font-bold text-charcoal">{wedding.deadlines.guestPaymentDisplay}</span>
+            , or their spot will be canceled.
           </p>
           <button
             type="button"
@@ -681,9 +683,14 @@ export function RSVPForm() {
             {status === "success" ? (
               <p className="text-sage-deep">
                 Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
-                {notedPlusOne
-                  ? ` Please pay for each additional guest by ${wedding.deadlines.guestPaymentDisplay}, or their spot will be canceled.`
-                  : ""}
+                {notedPlusOne ? (
+                  <>
+                    {" "}
+                    Please pay for each additional guest by{" "}
+                    <span className="font-bold">{wedding.deadlines.guestPaymentDisplay}</span>, or
+                    their spot will be canceled.
+                  </>
+                ) : null}
               </p>
             ) : null}
             {status === "error" && submitError ? (

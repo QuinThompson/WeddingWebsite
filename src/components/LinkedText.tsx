@@ -2,6 +2,21 @@ import type { ReactNode } from "react";
 
 const linkClass = "text-lilac-deep underline underline-offset-4";
 
+const deadlineDates = ["December 31, 2026", "January 31, 2027"];
+const deadlinePattern = new RegExp(`(${deadlineDates.join("|")})`, "g");
+
+function withDeadlines(text: string, keyPrefix: string): ReactNode[] {
+  return text.split(deadlinePattern).map((part, index) =>
+    deadlineDates.includes(part) ? (
+      <strong key={`${keyPrefix}-${index}`} className="font-bold text-charcoal">
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
 const token =
   /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(https?:\/\/[^\s]+|www\.[^\s]+)|(\+?\d{1,3}[\s-]?)?(?:\(\d{3}\)[\s-]?|\d{3}[\s.-])\d{3}[\s.-]\d{4}/g;
 
@@ -17,7 +32,7 @@ export function LinkedText({ text }: { text: string }) {
 
   for (const match of text.matchAll(token)) {
     const index = match.index ?? 0;
-    if (index > last) nodes.push(text.slice(last, index));
+    if (index > last) nodes.push(...withDeadlines(text.slice(last, index), `t-${last}`));
 
     const raw = match[0];
     const { core, trail } = trimTrail(raw);
@@ -48,6 +63,6 @@ export function LinkedText({ text }: { text: string }) {
     last = index + raw.length;
   }
 
-  if (last < text.length) nodes.push(text.slice(last));
+  if (last < text.length) nodes.push(...withDeadlines(text.slice(last), `t-${last}`));
   return <>{nodes}</>;
 }
