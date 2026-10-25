@@ -24,10 +24,15 @@ const script = Allura({
 export const metadata: Metadata = {
   title: `${wedding.couple.fullNames} Wedding Invitation`,
   description: `Digital wedding passport for ${wedding.couple.fullNames} — ${wedding.date.display} in ${wedding.destination.display}.`,
+  other: {
+    // Older Samsung Internet builds look for this name before they force-dark a page.
+    "supported-color-schemes": "light",
+  },
 };
 
 export const viewport: Viewport = {
-  colorScheme: "only light",
+  // Exact value Samsung Internet documents. CSS below still uses `only light` for Chrome.
+  colorScheme: "light",
   themeColor: "#f8f5ee",
 };
 
@@ -36,8 +41,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${display.variable} ${body.variable} ${script.variable} h-full`}
+      style={{ colorScheme: "only light", backgroundColor: "#f8f5ee" }}
     >
-      <body className="min-h-full antialiased">{children}</body>
+      <head>
+        <meta name="color-scheme" content="light" />
+      </head>
+      <body
+        className="min-h-full antialiased"
+        style={{ colorScheme: "only light", backgroundColor: "#f8f5ee" }}
+      >
+        {children}
+      </body>
     </html>
   );
 }

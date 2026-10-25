@@ -21,7 +21,7 @@ export function LoveStory() {
               >
                 <div
                   className={cx(
-                    "relative",
+                    "relative order-2",
                     imageFirst ? "md:order-1" : "md:order-2",
                     index % 2 === 0 ? "-rotate-1" : "rotate-1",
                     "max-[360px]:rotate-0",
@@ -46,7 +46,7 @@ export function LoveStory() {
                   ) : null}
                 </div>
 
-                <div className={cx(imageFirst ? "md:order-2" : "md:order-1")}>
+                <div className={cx("order-1", imageFirst ? "md:order-2" : "md:order-1")}>
                   <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-lilac-deep">
                     Chapter {index + 1}
                   </p>

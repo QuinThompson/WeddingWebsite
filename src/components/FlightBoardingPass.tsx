@@ -78,19 +78,19 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
         <DashboardNavLink
           href="/invite/rsvp"
           ariaLabel={`${wedding.dashboard.rsvpTitle}. ${wedding.dashboard.rsvpCta}`}
-          className="group flex min-h-[5.5rem] flex-col border-t border-dashed border-taupe/45 bg-paper/80 focus-visible:outline-none min-[380px]:min-h-[7.5rem] min-[380px]:border-t-0 min-[380px]:border-l"
+          className="group flex min-h-[5.5rem] flex-col bg-lilac-deep text-paper focus-visible:outline-none min-[380px]:min-h-[7.5rem]"
         >
-          <span className="bg-lilac px-2 py-1.5 text-center text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-paper">
+          <span className="bg-lilac px-2 py-1.5 text-center text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-paper">
             {wedding.dashboard.rsvpCta}
           </span>
-          <span className="flex flex-1 flex-col items-center justify-center gap-1 px-2 py-3 text-center">
-            <span className="text-[0.68rem] leading-snug text-charcoal/80">
+          <span className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-3 text-center">
+            <span className="text-[0.78rem] font-medium leading-snug">
               {wedding.dashboard.rsvpTitle}
             </span>
-            <span className="handwritten text-2xl leading-none text-lilac-deep" aria-hidden>
+            <span className="handwritten text-3xl leading-none" aria-hidden>
               ♡
             </span>
-            <span className="text-[0.65rem] font-medium text-lilac-deep underline underline-offset-2">
+            <span className="rounded-sm bg-paper px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-lilac-deep shadow-[0_6px_14px_rgba(52,50,56,0.18)] transition-transform group-hover:-translate-y-0.5">
               {wedding.dashboard.rsvpLink}
             </span>
           </span>
