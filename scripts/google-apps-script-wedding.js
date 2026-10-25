@@ -130,56 +130,98 @@ function doGet(e) {
 
 /* ---------- RSVP ---------- */
 
+var ALREADY_RESPONDED_ERROR = "This invitation has already been used to RSVP.";
+
 function handleGuestLookup_(data) {
   var found = findGuestByCode_(data.code);
   if (found.error) return json_({ ok: false, error: found.error });
   if (!found.guest) return json_({ ok: false, error: "That invitation code was not found." });
-  return json_({ ok: true, guest: found.guest });
+  return json_({
+    ok: true,
+    guest: found.guest,
+    alreadyResponded: hasRsvpForCode_(found.guest.code),
+  });
 }
 
 function handleRsvp_(data) {
-  var found = findGuestByCode_(data.invitationCode);
-  if (found.error) return json_({ ok: false, error: found.error });
-  var guest = found.guest;
-  if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+  } catch (err) {
+    return json_({ ok: false, error: "RSVPs are busy right now. Please try again in a moment." });
+  }
 
-  var attending = String(data.attending || "");
-  var adultCount = attending === "yes" ? Number(data.adultCount || 0) : 0;
-  var childCount = attending === "yes" ? Number(data.childCount || 0) : 0;
-  var plusOneAdults = attending === "yes" ? Math.max(0, adultCount - guest.allowedAdults) : 0;
-  var plusOneChildren = attending === "yes" ? Math.max(0, childCount - guest.allowedChildren) : 0;
-  var freeSlots = attending === "yes" && guest.plusOneAllowed ? 1 : 0;
-  var complimentaryAdults = Math.min(plusOneAdults, freeSlots);
-  var paidPlusOneAdults = plusOneAdults - complimentaryAdults;
-  var paidPlusOneChildren = plusOneChildren - Math.min(plusOneChildren, freeSlots - complimentaryAdults);
+  try {
+    var found = findGuestByCode_(data.invitationCode);
+    if (found.error) return json_({ ok: false, error: found.error });
+    var guest = found.guest;
+    if (!guest) return json_({ ok: false, error: "That invitation code was not found." });
+    if (hasRsvpForCode_(guest.code)) {
+      return json_({ ok: false, error: ALREADY_RESPONDED_ERROR });
+    }
 
-  var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
-  alignRsvpColumns_(sheet);
-  sheet.appendRow([
-    data.submittedAt || new Date().toISOString(),
-    data.id || "",
-    data.fullName || "",
-    data.email || "",
-    data.mobile || "",
-    attending,
-    data.guestCount || "",
-    data.guestNames || "",
-    data.hotelStatus || "",
-    data.message || "",
-    data.adultCount || "",
-    data.childCount || "",
-    data.adultsDetail || "",
-    data.childrenDetail || "",
-    guest.code,
-    guest.household,
-    guest.allowedAdults,
-    guest.allowedChildren,
-    plusOneAdults,
-    plusOneChildren,
-    paidPlusOneAdults,
-    paidPlusOneChildren,
-  ]);
-  return json_({ ok: true, stored: "rsvp" });
+    var attending = String(data.attending || "");
+    var adultCount = attending === "yes" ? Number(data.adultCount || 0) : 0;
+    var childCount = attending === "yes" ? Number(data.childCount || 0) : 0;
+    var plusOneAdults = attending === "yes" ? Math.max(0, adultCount - guest.allowedAdults) : 0;
+    var plusOneChildren = attending === "yes" ? Math.max(0, childCount - guest.allowedChildren) : 0;
+    var freeSlots = attending === "yes" && guest.plusOneAllowed ? 1 : 0;
+    var complimentaryAdults = Math.min(plusOneAdults, freeSlots);
+    var paidPlusOneAdults = plusOneAdults - complimentaryAdults;
+    var paidPlusOneChildren = plusOneChildren - Math.min(plusOneChildren, freeSlots - complimentaryAdults);
+
+    var sheet = getOrCreateSheet_(RSVP_SHEET, RSVP_HEADERS);
+    alignRsvpColumns_(sheet);
+    sheet.appendRow([
+      data.submittedAt || new Date().toISOString(),
+      data.id || "",
+      data.fullName || "",
+      data.email || "",
+      data.mobile || "",
+      attending,
+      data.guestCount || "",
+      data.guestNames || "",
+      data.hotelStatus || "",
+      data.message || "",
+      data.adultCount || "",
+      data.childCount || "",
+      data.adultsDetail || "",
+      data.childrenDetail || "",
+      guest.code,
+      guest.household,
+      guest.allowedAdults,
+      guest.allowedChildren,
+      plusOneAdults,
+      plusOneChildren,
+      paidPlusOneAdults,
+      paidPlusOneChildren,
+    ]);
+    SpreadsheetApp.flush();
+    return json_({ ok: true, stored: "rsvp" });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** True when the RSVPs tab already has a row for this invitation code. */
+function hasRsvpForCode_(code) {
+  var wanted = normalizeCode_(code);
+  if (!wanted) return false;
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) return false;
+  var sheet = ss.getSheetByName(RSVP_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) return false;
+
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var values = sheet.getRange(1, 1, sheet.getLastRow(), lastCol).getValues();
+  var codeCol = headerIndex_(values[0], "Invitation Code");
+  if (codeCol < 0) return false;
+
+  for (var i = 1; i < values.length; i++) {
+    if (normalizeCode_(values[i][codeCol]) === wanted) return true;
+  }
+  return false;
 }
 
 function normalizeCode_(value) {

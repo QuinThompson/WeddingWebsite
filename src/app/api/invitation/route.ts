@@ -11,6 +11,7 @@ type LookupResponse = {
   ok?: boolean;
   error?: string;
   guest?: InvitationAllowance;
+  alreadyResponded?: boolean;
 };
 
 export async function POST(request: Request) {
@@ -56,5 +57,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: notFound ? 404 : 422 });
   }
 
-  return NextResponse.json({ ok: true, guest: result.data.guest });
+  return NextResponse.json({
+    ok: true,
+    guest: result.data.guest,
+    alreadyResponded: Boolean(result.data.alreadyResponded),
+  });
 }

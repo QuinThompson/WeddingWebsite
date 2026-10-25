@@ -91,7 +91,7 @@ export const wedding = {
     arrivalGuidance:
       "Please arrive by 3:30 PM so you can find your seat and enjoy a quiet moment before the ceremony begins at 4:00 PM.",
     transportationNotes:
-      "Resort shuttles and hotel transfers will be available from the Coconut Bay lobby. Walking paths to Eternity Beach are short and well marked.",
+      "If you are staying at Coconut Bay and flying into UVF, a hotel transfer is available too. On the wedding day, shuttles leave from the Coconut Bay lobby, and the walk to Eternity Beach is short and well marked.",
   },
 
   reception: {
@@ -204,7 +204,7 @@ export const wedding = {
   dashboard: {
     invitationEyebrow: "You are invited to the wedding of",
     detailsLink: "Wedding details",
-    detailsHeading: "Details of the wedding",
+    detailsHeading: "THE DETAILS OF OUR FOREVER",
     partyTabTitle: "Entourage",
     partyTabSubtitle: "Click here",
     storyCaption: "Our Love Story",
@@ -218,7 +218,8 @@ export const wedding = {
     registryCta: "View gifts",
     registryTagEyebrow: "Wedding",
     registryTagTitle: "Gifts",
-    registryTagCta: "Gift here",
+    registryTagBody: "We’ve thoughtfully chosen a few things to help make our house a home.",
+    registryTagCta: "View our registry",
     countdownHeading: "Boarding Soon.....",
     countdownComplete: "Today is the day!",
     flightHeading: "Flight to Forever",
@@ -367,7 +368,7 @@ export const wedding = {
       id: "met",
       title: "How We Met",
       handwrittenLabel: "The First Message",
-      body: "Our story began with a simple message on Facebook, one that sparked conversations neither of us wanted to end. What started as casual chats slowly grew into a beautiful friendship. We eventually met in person at one of Shenice’s school sports days, not knowing that this little moment would become part of something so special. As time went on, our friendship blossomed into something more, and somewhere along the way, we found love in each other. What began with a simple conversation became the start of our forever.",
+      body: "Our story began with a simple message on Facebook, one that sparked conversations neither of us wanted to end. What started as casual chats slowly grew into a beautiful friendship. Then, as fate would have it, our paths unexpectedly crossed at one of Shenice’s school sports days. It wasn't planned, and neither of us knew we'd see each other that day, but sometimes the most beautiful moments happen when you least expect them. As time went on, our friendship blossomed into something more, and somewhere along the way, we found love in each other. What began with a simple conversation became the start of our forever.",
       image: "/images/how_we_met.png",
       imageAlt: "Phones on a bench at a sports day, where Shenice and Quinton first met",
       imageSide: "left",
@@ -385,7 +386,7 @@ export const wedding = {
       id: "jupiter",
       title: "Jupiter",
       handwrittenLabel: "Our First Child",
-      body: "Our love story wouldn't be complete without our beautiful daughter, Jupiter. She has brought a whole new meaning to love, filling our home with laughter, warmth, and countless precious moments. Through her, we've discovered a love greater than we ever imagined and a bond that continues to grow stronger every day. As we prepare to say “I do,” we're not just celebrating our love for each other, but the beautiful little family we've created and the lifetime of memories still waiting to be made.",
+      body: "Our love story wouldn't be complete without our beautiful daughter, Jupiter. She has brought a whole new meaning to love, filling our lives with laughter, warmth, and endless surprises. She has a way of turning ordinary moments into unforgettable memories and making sure life is never too predictable. Through her, we've discovered a love greater than we ever imagined and a bond that continues to grow stronger every day. What began as love between two has grown into the beautiful little family we've built together, with a lifetime of memories still waiting to be made.",
       image: "/images/ultrasound.png",
       imageAlt: "Ultrasound of Jupiter before she was born",
       imageSide: "left",
@@ -394,16 +395,16 @@ export const wedding = {
       id: "proposal",
       title: "The Proposal",
       handwrittenLabel: "the yes",
-      body: "The proposal was simple and sweet, kept quiet until the moment arrived, though Jupiter nearly gave the secret away. It happened in our new home, close to our yearly anniversary. Shenice was happily surprised; she never saw it coming. A quiet yes, in a place that already felt like forever.",
-      image: "/images/couple-story-03.jpg",
-      imageAlt: "Romantic portrait suggesting the proposal at home",
+      body: "The proposal was simple and sweet, kept quiet until the moment arrived, though Jupiter nearly gave the secret away. It happened in our new home. Shenice was happily surprised; she never saw it coming. A quiet yes, in a place that already felt like forever.",
+      image: "/images/proposal.png",
+      imageAlt: "Rose gold balloons spelling Will U Marry Me, surrounded by candles and petals",
       imageSide: "right",
     },
     {
       id: "destination",
       title: "Our Forever Begins",
       handwrittenLabel: "The Next Chapter",
-      body: "From a simple conversation on Facebook to a love that grew into a beautiful family, every chapter has brought us closer to this moment. We've shared laughter, adventures, milestones, and countless memories along the way, with our little Jupiter making our journey even more special. Now, as we prepare to say “I do,” we're looking forward to everything life has waiting for us. Our story is still being written, and we can't wait to begin this next chapter as husband and wife, surrounded by the people we love most.",
+      body: "From a simple conversation on Facebook to a love that grew into a beautiful family, every chapter has brought us closer to this moment. We've shared laughter, adventures, milestones, and countless memories along the way, with our little Jupiter keeping us on our toes, filling our days with unexpected surprises. Now, as we prepare to say “I do,” we're looking forward to everything life has waiting for us. Our story is still being written, and we can't wait to begin this next chapter as husband and wife, surrounded by the people we love most.",
       image: "/images/Triangle-altar.jpg",
       imageAlt: "Beach ceremony with a triangular wooden altar facing the sea",
       imageSide: "left",
@@ -414,12 +415,12 @@ export const wedding = {
     {
       id: "rsvp",
       title: "Wedding RSVP Deadline",
-      body: "Please confirm your attendance by December 31, 2026 so we can finalize seating, meals, and transportation. RSVP only for guests named on your invitation.",
+      body: "Please confirm your attendance by December 31, 2026 so we can finalize seating, meals. RSVP only for guests named on your invitation.",
     },
     {
       id: "plus-one",
       title: "Plus Ones",
-      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge and VAT included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$175 for an adult and about US$51 for a child ages 4–12 (resort service charge and VAT included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       id: "dress-code",

@@ -138,7 +138,9 @@ function toPayload(values: FormState, invitation: InvitationAllowance): RsvpPayl
   };
 }
 
-async function lookupInvitation(code: string): Promise<InvitationAllowance> {
+async function lookupInvitation(
+  code: string,
+): Promise<{ guest: InvitationAllowance; alreadyResponded: boolean }> {
   const response = await fetch("/api/invitation", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -147,11 +149,12 @@ async function lookupInvitation(code: string): Promise<InvitationAllowance> {
   const data = (await response.json().catch(() => null)) as {
     error?: string;
     guest?: InvitationAllowance;
+    alreadyResponded?: boolean;
   } | null;
   if (!response.ok || !data?.guest) {
     throw new Error(data?.error || "That invitation code was not found.");
   }
-  return data.guest;
+  return { guest: data.guest, alreadyResponded: Boolean(data.alreadyResponded) };
 }
 
 async function submitRsvp(values: FormState, invitation: InvitationAllowance): Promise<void> {
@@ -189,6 +192,7 @@ export function RSVPForm() {
   const [notedPlusOne, setNotedPlusOne] = useState(false);
   const [code, setCode] = useState("");
   const [invitation, setInvitation] = useState<InvitationAllowance | null>(null);
+  const [alreadyResponded, setAlreadyResponded] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [lookupStatus, setLookupStatus] = useState<"idle" | "loading">("idle");
 
@@ -204,7 +208,7 @@ export function RSVPForm() {
       return;
     }
 
-    if (!invitation) return;
+    if (!invitation || alreadyResponded) return;
 
     const plusOnes = plusOneCounts(
       invitation,
@@ -232,8 +236,9 @@ export function RSVPForm() {
     setLookupError(null);
     setLookupStatus("loading");
     try {
-      const guest = await lookupInvitation(code);
-      setInvitation(guest);
+      const result = await lookupInvitation(code);
+      setInvitation(result.guest);
+      setAlreadyResponded(result.alreadyResponded);
       setStatus("idle");
       setSubmitError(null);
     } catch (err) {
@@ -310,6 +315,40 @@ export function RSVPForm() {
     );
   }
 
+  if (alreadyResponded) {
+    return (
+      <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
+        <div className="paper-card relative overflow-hidden border border-lilac/35 p-5 sm:p-6">
+          <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
+          <div className="pl-3">
+            <p className="text-sm text-charcoal/75">
+              This invitation is for{" "}
+              <span className="font-semibold text-charcoal">{invitation.household}</span>.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-charcoal/85">
+              This invitation has already been used to RSVP. Each code can reply once. If you need
+              to change your answer, please reach out to us.
+            </p>
+            <button
+              type="button"
+              className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+              onClick={() => {
+                setInvitation(null);
+                setAlreadyResponded(false);
+                setValues(initialState);
+                setErrors({});
+                setStatus("idle");
+                setSubmitError(null);
+              }}
+            >
+              Use a different code
+            </button>
+          </div>
+        </div>
+      </DetailPageShell>
+    );
+  }
+
   const adultTotal = values.attending === "yes" ? 1 + values.adults.length : 0;
   const childTotal = values.attending === "yes" ? values.children.length : 0;
   const plusOnes = plusOneCounts(invitation, adultTotal, childTotal);
@@ -326,7 +365,7 @@ export function RSVPForm() {
             <span className="font-semibold text-charcoal">{invitation.household}</span>.
           </p>
           <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
-            Our invitation includes {invitation.allowedAdults}{" "}
+            Your invitation includes {invitation.allowedAdults}{" "}
             {invitation.allowedAdults === 1 ? "adult" : "adults"} (including yourself) and{" "}
             {invitation.allowedChildren}{" "}
             {invitation.allowedChildren === 1 ? "child" : "children"}.
@@ -342,6 +381,7 @@ export function RSVPForm() {
             className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
             onClick={() => {
               setInvitation(null);
+              setAlreadyResponded(false);
               setValues(initialState);
               setErrors({});
               setStatus("idle");

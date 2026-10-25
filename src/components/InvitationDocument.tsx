@@ -80,56 +80,57 @@ export function InvitationDocument({ className }: InvitationDocumentProps) {
             <span className="h-px flex-1 bg-taupe/45" aria-hidden />
           </div>
 
-          <div className="mt-2.5 flex min-h-0 flex-1">
-            <dl className="min-w-0 flex-1 space-y-1 text-[0.58rem] uppercase tracking-[0.04em] sm:text-[0.6rem]">
-              <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-                <div>
-                  <dt className="text-taupe">Type</dt>
-                  <dd className="font-semibold text-charcoal">Wedding</dd>
-                </div>
-                <div>
-                  <dt className="text-taupe">Country</dt>
-                  <dd className="break-words font-semibold text-charcoal">
-                    {wedding.destination.display}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-taupe">No.</dt>
-                  <dd className="font-semibold text-charcoal">{boardingNo}</dd>
-                </div>
+          <div className="mt-2.5 flex min-h-0 flex-1 flex-col">
+            <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-2 gap-y-1 text-[0.58rem] uppercase tracking-[0.04em] sm:text-[0.6rem]">
+              <div>
+                <dt className="text-taupe">OCCASION</dt>
+                <dd className="font-semibold text-charcoal">Wedding</dd>
+              </div>
+              <div>
+                <dt className="text-taupe">DESTINATION</dt>
+                <dd className="break-words font-semibold text-charcoal">
+                  {wedding.destination.display}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-taupe">WEDDING NO.</dt>
+                <dd className="font-semibold text-charcoal">{boardingNo}</dd>
               </div>
               <div className="min-w-0">
-                <dt className="text-taupe">Name</dt>
+                <dt className="text-taupe">THE COUPLE</dt>
                 <dd className="break-words font-semibold normal-case tracking-normal text-charcoal">
                   {wedding.couple.fullNames}
                 </dd>
               </div>
               <div>
-                <dt className="text-taupe">Date</dt>
-                <dd className="font-semibold normal-case tracking-normal text-charcoal">
+                <dt className="text-taupe">THE BIG DAY</dt>
+                <dd className="break-words font-semibold normal-case tracking-normal text-charcoal">
                   {wedding.date.display}
                 </dd>
               </div>
               <div>
-                <dt className="text-taupe">Time</dt>
+                <dt className="text-taupe">CEREMONY BEGINS</dt>
                 <dd className="font-semibold normal-case tracking-normal text-charcoal">
                   {wedding.date.timeDisplay}
                 </dd>
               </div>
-              <div className="min-w-0">
-                <dt className="text-taupe">Location</dt>
+              <div className="col-span-2 min-w-0">
+                <dt className="text-taupe">VENUE</dt>
                 <dd className="break-words font-semibold normal-case tracking-normal text-charcoal">
                   {wedding.hotel.name}
                 </dd>
               </div>
             </dl>
+            <p className="handwritten mt-3 text-center text-[1.05rem] leading-snug normal-case tracking-normal text-lilac-deep">
+              One destination. Two hearts. Forever begins here.
+            </p>
           </div>
 
           <DashboardNavLink
             href="/invite/details"
             className="mt-2 inline-flex min-h-10 w-full items-center justify-center border-t border-taupe/30 pt-2 text-center text-[0.58rem] font-medium uppercase tracking-[0.06em] text-lilac-deep underline underline-offset-2 sm:text-[0.62rem]"
           >
-            For more details click here
+            EXPLORE OUR WEDDING DETAILS
           </DashboardNavLink>
         </div>
       </div>

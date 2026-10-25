@@ -101,37 +101,32 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
             <InvitationDocument />
           </motion.div>
 
-          <div className="mt-4 flex flex-col items-center gap-3 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-end min-[400px]:justify-between">
-            <div className="flex flex-wrap items-end justify-center gap-2 min-[400px]:justify-start">
-              <motion.div variants={assemble({ y: 64, rotate: -12 }, { ...opts, index: 4 })}>
-                <PolaroidCard
-                  href="/invite/story"
-                  src="/images/love_story.jpeg"
-                  alt="Shenice and Quinton together at sunset on the beach"
-                  caption={wedding.dashboard.storyCaption}
-                  rotate={-3.5}
-                />
-              </motion.div>
-              {/* Prenup photos — hidden for now
-              <motion.div variants={assemble({ y: 64, rotate: 12 }, { ...opts, index: 5 })}>
-                <PolaroidCard
-                  href="/invite/gallery"
-                  src={wedding.gallery[0].src}
-                  alt={wedding.gallery[0].alt}
-                  caption={wedding.dashboard.photosCaption}
-                  rotate={3}
-                />
-              </motion.div>
-              */}
-              <motion.div variants={assemble({ y: 64, rotate: -8 }, { ...opts, index: 6 })}>
-                <MemoriesPolaroid rotate={-2} />
-              </motion.div>
-            </div>
-            <motion.div
-              className="shrink-0"
-              variants={assemble({ x: 56, y: 10, rotate: 4 }, { ...opts, index: 7 })}
-            >
-              <RegistryCard />
+          <div className="mt-4 flex flex-wrap items-end justify-center gap-2">
+            <motion.div variants={assemble({ y: 64, rotate: -12 }, { ...opts, index: 4 })}>
+              <PolaroidCard
+                href="/invite/story"
+                src="/images/love_story.jpeg"
+                alt="Shenice and Quinton together at sunset on the beach"
+                caption={wedding.dashboard.storyCaption}
+                rotate={-3.5}
+              />
+            </motion.div>
+            {/* Prenup photos — hidden for now
+            <motion.div variants={assemble({ y: 64, rotate: 12 }, { ...opts, index: 5 })}>
+              <PolaroidCard
+                href="/invite/gallery"
+                src={wedding.gallery[0].src}
+                alt={wedding.gallery[0].alt}
+                caption={wedding.dashboard.photosCaption}
+                rotate={3}
+              />
+            </motion.div>
+            */}
+            <motion.div variants={assemble({ y: 64, rotate: -8 }, { ...opts, index: 6 })}>
+              <MemoriesPolaroid rotate={-2} />
+            </motion.div>
+            <motion.div variants={assemble({ y: 64, rotate: 10 }, { ...opts, index: 7 })}>
+              <RegistryCard rotate={3} />
             </motion.div>
           </div>
 
