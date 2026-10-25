@@ -23,7 +23,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
         <Plane className="h-3.5 w-3.5" aria-hidden />
       </div>
 
-      <div className="paper-card grid grid-cols-1 gap-0 min-[380px]:grid-cols-[1fr_auto] sm:grid-cols-[1.2fr_auto_0.85fr]">
+      <div className="paper-card grid grid-cols-1 gap-0 sm:grid-cols-[minmax(0,1.15fr)_5.75rem_minmax(0,0.95fr)]">
         <div className="min-w-0 p-3">
           <p className="handwritten text-lg leading-none text-lilac-deep">Join our journey</p>
 
@@ -65,36 +65,50 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
           </DashboardNavLink>
         </div>
 
-        <div className="relative hidden w-[4.5rem] overflow-hidden border-x border-dashed border-taupe/40 sm:block">
+        <div
+          className="relative h-28 overflow-hidden border-y border-dashed border-taupe/40 sm:h-auto sm:border-x sm:border-y-0"
+          aria-hidden
+        >
           <Image
-            src={wedding.images.coupleCover}
-            alt={wedding.images.coupleCoverAlt}
+            src="/images/Dream-Blurred-Tropical-Beach.png"
+            alt=""
             fill
-            sizes="72px"
+            sizes="(max-width: 640px) 100vw, 92px"
             className="object-cover"
           />
         </div>
 
-        <DashboardNavLink
-          href="/invite/rsvp"
-          ariaLabel={`${wedding.dashboard.rsvpTitle}. ${wedding.dashboard.rsvpCta}`}
-          className="group flex min-h-[5.5rem] flex-col bg-lilac-deep text-paper focus-visible:outline-none min-[380px]:min-h-[7.5rem]"
-        >
-          <span className="bg-lilac px-2 py-1.5 text-center text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-paper">
+        <div className="flex flex-col bg-[#f7f4f8] text-center">
+          <p className="bg-lilac/45 px-2 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-lilac-deep">
             {wedding.dashboard.rsvpCta}
-          </span>
-          <span className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-3 text-center">
-            <span className="text-[0.78rem] font-medium leading-snug">
-              {wedding.dashboard.rsvpTitle}
-            </span>
-            <span className="handwritten text-3xl leading-none" aria-hidden>
-              ♡
-            </span>
-            <span className="rounded-sm bg-paper px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-lilac-deep shadow-[0_6px_14px_rgba(52,50,56,0.18)] transition-transform group-hover:-translate-y-0.5">
-              {wedding.dashboard.rsvpLink}
-            </span>
-          </span>
-        </DashboardNavLink>
+          </p>
+          <div className="flex flex-1 flex-col items-center justify-center px-3 py-4">
+            <p className="handwritten text-[2rem] leading-none text-lilac-deep">
+              {wedding.dashboard.rsvpHeadline}
+            </p>
+            <p className="mt-2 text-[0.72rem] leading-snug text-charcoal/80">
+              {wedding.dashboard.rsvpLead}
+            </p>
+            <p className="mt-1.5 text-[0.72rem] font-medium leading-snug text-charcoal">
+              {wedding.dashboard.rsvpPrompt}
+              <br />
+              {wedding.deadlines.rsvpDisplay}
+            </p>
+            <DashboardNavLink
+              href="/invite/rsvp"
+              ariaLabel={`${wedding.dashboard.rsvpButton}. ${wedding.dashboard.rsvpPrompt} ${wedding.deadlines.rsvpDisplay}`}
+              className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-lilac-deep px-5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-paper shadow-[0_8px_16px_rgba(120,101,143,0.28)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none"
+            >
+              {wedding.dashboard.rsvpButton}
+              <span aria-hidden>→</span>
+            </DashboardNavLink>
+            <div className="mt-4 flex w-full max-w-[9rem] items-center gap-2 text-lilac/80" aria-hidden>
+              <span className="h-px flex-1 bg-current" />
+              <span className="text-sm leading-none">♡</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+          </div>
+        </div>
       </div>
     </article>
   );

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getFromGoogleAppsScript, getGoogleAppsScriptUrl } from "@/lib/googleSheets";
 
 export const runtime = "nodejs";
 
@@ -57,8 +58,40 @@ export async function GET(
     }
   }
 
+  const viaScript = await readMemoryFileFromScript(fileId);
+  if (viaScript) return viaScript;
+
   return NextResponse.json(
     { error: "Could not load that memory image from Google Drive." },
     { status: 502 },
   );
+}
+
+/** Used when Google blocks public sharing on the Memories folder. */
+async function readMemoryFileFromScript(fileId: string) {
+  const webhookUrl = getGoogleAppsScriptUrl("memories");
+  if (!webhookUrl) return null;
+
+  const result = await getFromGoogleAppsScript<{
+    ok?: boolean;
+    mimeType?: string;
+    base64?: string;
+  }>(webhookUrl, { type: "memories-file", fileId });
+
+  if (!result.ok || !result.data?.ok || !result.data.base64) return null;
+
+  const bytes = Buffer.from(result.data.base64, "base64");
+  if (bytes.byteLength < 32) return null;
+
+  const contentType = result.data.mimeType?.startsWith("image/")
+    ? result.data.mimeType
+    : "image/jpeg";
+
+  return new NextResponse(bytes, {
+    status: 200,
+    headers: {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+    },
+  });
 }

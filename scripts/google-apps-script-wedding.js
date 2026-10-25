@@ -98,6 +98,7 @@ function doPost(e) {
     if (type === "registry-add") return handleRegistryAdd_(data);
     if (type === "memories-list") return handleMemoriesList_();
     if (type === "memories-upload") return handleMemoriesUpload_(data);
+    if (type === "memories-file") return handleMemoriesFile_(data);
 
     return json_({ ok: false, error: "Unknown type: " + type });
   } catch (err) {
@@ -110,6 +111,7 @@ function doGet(e) {
     var type = (e && e.parameter && e.parameter.type) || "ping";
     if (type === "registry" || type === "registry-list") return handleRegistryList_();
     if (type === "memories" || type === "memories-list") return handleMemoriesList_();
+    if (type === "memories-file") return handleMemoriesFile_({ fileId: e.parameter.fileId });
     return json_({ ok: true, service: "wedding-google", types: [
       "guest-lookup",
       "rsvp",
@@ -119,6 +121,7 @@ function doGet(e) {
       "registry-add",
       "memories-list",
       "memories-upload",
+      "memories-file",
     ]});
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -428,14 +431,12 @@ function handleMemoriesUpload_(data) {
     });
   }
 
+  // Link sharing is optional. Some Google accounts block it; the site can still
+  // read the file through memories-file.
   try {
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   } catch (err) {
-    return json_({
-      ok: false,
-      error:
-        "The photo was saved, but Google blocked sharing it. In the Memories folder, allow anyone with the link to view files.",
-    });
+    // Keep the upload. The photo is already in the folder.
   }
 
   var fileId = file.getId();
@@ -462,6 +463,34 @@ function handleMemoriesUpload_(data) {
 function testMemoriesAccess() {
   var folder = DriveApp.getFolderById(MEMORIES_FOLDER_ID);
   Logger.log("Memories folder: " + folder.getName());
+}
+
+/** Returns one Memories-folder photo so the website can show it without a public link. */
+function handleMemoriesFile_(data) {
+  var fileId = String((data && data.fileId) || "");
+  if (!fileId) return json_({ ok: false, error: "fileId is required" });
+
+  var sheet = getOrCreateSheet_(MEMORIES_SHEET, MEMORIES_HEADERS);
+  var values = sheet.getDataRange().getValues();
+  var allowed = false;
+  for (var r = 1; r < values.length; r++) {
+    if (String(values[r][1]) === fileId) {
+      allowed = true;
+      break;
+    }
+  }
+  if (!allowed) return json_({ ok: false, error: "Unknown memory file." });
+
+  try {
+    var blob = DriveApp.getFileById(fileId).getBlob();
+    return json_({
+      ok: true,
+      mimeType: blob.getContentType() || "image/jpeg",
+      base64: Utilities.base64Encode(blob.getBytes()),
+    });
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  }
 }
 
 function readMemories_(sheet) {

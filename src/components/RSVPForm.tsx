@@ -326,12 +326,14 @@ export function RSVPForm() {
             <span className="font-semibold text-charcoal">{invitation.household}</span>.
           </p>
           <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
-            Included with your invitation: {invitation.allowedAdults}{" "}
-            {invitation.allowedAdults === 1 ? "adult" : "adults"} and {invitation.allowedChildren}{" "}
+            Our invitation includes {invitation.allowedAdults}{" "}
+            {invitation.allowedAdults === 1 ? "adult" : "adults"} (including yourself) and{" "}
+            {invitation.allowedChildren}{" "}
             {invitation.allowedChildren === 1 ? "child" : "children"}.
             {invitation.plusOneAllowed
-              ? " One plus-one is included at no charge. Any further plus-one can be added if you are willing to pay."
-              : " You may add a plus-one if you are willing to pay. Payment is due by January 31, 2027, or that plus-one will be canceled."}
+              ? " One additional guest is included. A further guest is welcome at your own expense."
+              : " You’re welcome to bring an additional guest at your own expense."}{" "}
+            Payment is due by {wedding.deadlines.guestPaymentDisplay}, or their spot will be canceled.
           </p>
           <button
             type="button"
@@ -680,7 +682,7 @@ export function RSVPForm() {
               <p className="text-sage-deep">
                 Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
                 {notedPlusOne
-                  ? ` Please pay for each plus-one by ${wedding.deadlines.rsvpDisplay}, or that plus-one will be canceled.`
+                  ? ` Please pay for each additional guest by ${wedding.deadlines.guestPaymentDisplay}, or their spot will be canceled.`
                   : ""}
               </p>
             ) : null}

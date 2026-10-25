@@ -141,8 +141,10 @@ export const wedding = {
   },
 
   deadlines: {
-    rsvpDisplay: "January 31, 2027",
-    rsvpIso: "2027-01-31",
+    rsvpDisplay: "December 31, 2026",
+    rsvpIso: "2026-12-31",
+    guestPaymentDisplay: "January 31, 2027",
+    guestPaymentIso: "2027-01-31",
     hotelBookingDisplay: "January 31, 2027",
     hotelBookingIso: "2027-01-31",
   },
@@ -170,12 +172,12 @@ export const wedding = {
       heading: "Prefer to give money?",
       note: "A transfer to the account below is just as welcome.",
       alternateBankNote:
-        "If you prefer a different bank, message us and we’ll share those details.",
+        "If you use a different bank, or you are sending USD, message us and we’ll share the account information.",
       details: [
-        { label: "Bank", value: "Your bank name" },
-        { label: "Account name", value: "Account holder name" },
-        { label: "Account number", value: "Your account number" },
-        { label: "Account type", value: "Savings or chequing" },
+        { label: "Bank", value: "Republic Bank" },
+        { label: "Account name", value: "Shenice Clarke" },
+        { label: "Account number", value: "320049005701" },
+        { label: "Account type", value: "Chequing" },
       ],
     },
     claimCta: "I am buying this",
@@ -221,6 +223,10 @@ export const wedding = {
     rsvpTitle: "Confirm your attendance",
     rsvpCta: "RSVP",
     rsvpLink: "Click here",
+    rsvpHeadline: "Ready for Takeoff?",
+    rsvpLead: "We can’t wait to celebrate with you!",
+    rsvpPrompt: "Kindly confirm your attendance by",
+    rsvpButton: "RSVP now",
     tapToOpen: "Click the passport to open",
     passportTitle: "Wedding Passport",
     toTheMarriageOf: "To the wedding of",
@@ -369,8 +375,8 @@ export const wedding = {
       title: "Our First Trip",
       handwrittenLabel: "passport stamps",
       body: "Tobago was our first trip together, with sunny days, shared laughs, and a few hard moments along the way. Looking back, we hold both the good and the bad with open hands. We wouldn’t trade it. No regrets, only the beginning of learning how to travel through life side by side.",
-      image: "/images/couple-story-02.jpg",
-      imageAlt: "Travel-inspired scene recalling Shenice and Quinton’s first trip to Tobago",
+      image: "/images/IMG_5611.jpg",
+      imageAlt: "Shadows of Shenice and Quinton on the sand during their trip to Tobago",
       imageSide: "right",
     },
     {
@@ -396,8 +402,8 @@ export const wedding = {
       title: "Choosing the Destination",
       handwrittenLabel: "why St Lucia",
       body: "We chose St Lucia because we wanted more than a ceremony. We wanted a getaway wedding where everyone we love could relax, celebrate, and make memories together. Beautiful scenery, warm air, and room to unwind: St Lucia felt like the right place to gather and begin this next chapter.",
-      image: "/images/couple-story-04.jpg",
-      imageAlt: "Coastal St Lucia atmosphere representing the chosen destination",
+      image: "/images/Triangle-altar.jpg",
+      imageAlt: "Beach ceremony with a triangular wooden altar facing the sea",
       imageSide: "left",
     },
   ] as StoryChapter[],
@@ -406,17 +412,19 @@ export const wedding = {
     {
       id: "rsvp",
       title: "Wedding RSVP Deadline",
-      body: "Please confirm your attendance by January 31, 2027 so we can finalize seating, meals, and transportation. RSVP only for guests named on your invitation.",
+      body: "Please confirm your attendance by December 31, 2026 so we can finalize seating, meals, and transportation. RSVP only for guests named on your invitation.",
     },
     {
       id: "plus-one",
       title: "Plus-ones & additional guests",
-      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment for a paid plus-one is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
+      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       id: "dress-code",
       title: "Dress Code",
-      body: "Our dress code is still being confirmed. We’ll share the details here once they’re set.",
+      body: "Please come dressed your best for our wedding by the sea. The attire page has the colors we love and the ones to skip.",
+      href: "/invite/attire",
+      linkLabel: "View attire",
     },
     {
       id: "currency",
@@ -427,11 +435,6 @@ export const wedding = {
       id: "weather",
       title: "Weather Expectations",
       body: "For guests staying at Coconut Bay: May is typically warm with occasional brief showers. Pack a light cover-up for the breeze and air-conditioned spaces.",
-    },
-    {
-      id: "local-transportation",
-      title: "Local Transportation",
-      body: "Within the resort, walking and cart transfers cover most needs. For island exploring, pre-book a driver rather than relying on last-minute taxis during peak hours.",
     },
     {
       id: "travel-tips",
@@ -468,9 +471,9 @@ export const wedding = {
       body: "For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com. Please mention Shenice & Quinton’s wedding (May 12, 2027) so she knows which celebration you’re writing about.",
     },
     {
-      id: "emergency-contact",
-      title: "Emergency Contact",
-      body: "The resort has a nurse on premises.",
+      id: "nursing-station",
+      title: "Nursing Station",
+      body: "If you are staying at Coconut Bay and a medical emergency happens, the resort has a nursing station on site.",
     },
   ] as Reminder[],
 
@@ -531,7 +534,10 @@ export const wedding = {
   faqs: [
     {
       question: "What should I wear?",
-      answer: "Our dress code is still being confirmed. We’ll share the details here once they’re set.",
+      answer:
+        "Please come dressed your best for our wedding by the sea. The attire page has the colors we love and the ones to skip.",
+      href: "/invite/attire",
+      linkLabel: "View attire",
     },
     {
       question: "Where should I stay?",
@@ -549,11 +555,6 @@ export const wedding = {
         "UVF (Hewanorra) is recommended for its proximity to Coconut Bay. SLU is an alternate option with a longer transfer.",
     },
     {
-      question: "How do I get around?",
-      answer:
-        "Within the resort, walking and cart transfers cover most needs. For island exploring, pre-book a driver rather than relying on last-minute taxis during peak hours.",
-    },
-    {
       question: "Any travel tips?",
       answer:
         "Keep digital and paper copies of travel documents. Pack reef-safe sunscreen and insect repellent. Build buffer time between landing and wedding events. Download offline maps before exploring beyond the resort.",
@@ -568,7 +569,7 @@ export const wedding = {
     {
       question: "Can I bring a plus-one?",
       answer:
-        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment for a paid plus-one is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
+        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       question: "What about gifts?",
@@ -583,8 +584,9 @@ export const wedding = {
         "For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com and mention Shenice & Quinton’s wedding (May 12, 2027). For room reservations, email reservations@cbayresort.com, call 877-252-0304, or visit www.cbayresort.com.",
     },
     {
-      question: "Is there medical help at the resort?",
-      answer: "The resort has a nurse on premises.",
+      question: "What if a medical emergency happens at Coconut Bay?",
+      answer:
+        "If you are staying at Coconut Bay and a medical emergency happens, the resort has a nursing station on site.",
     },
   ] as FaqItem[],
 
@@ -599,7 +601,7 @@ export const wedding = {
       { value: "no", label: "Unable to attend" },
     ],
     additionalGuestNotice:
-      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Payment is due by January 31, 2027. If payment is not received by that date, that plus-one will be canceled.",
+      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12, including the resort’s service charge and VAT. Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
   },
 
   memories: {
@@ -609,8 +611,8 @@ export const wedding = {
      */
     forceUnlock: true,
     unlockIso: "2027-05-12T00:00:00",
-    placeholderImage: "/images/gallery/photo-02.jpg",
-    placeholderAlt: "Memories gallery placeholder",
+    placeholderImage: "/images/Elegant_Wedding_photo_Memories.png",
+    placeholderAlt: "Instant camera with wedding photos and flowers",
     pageEyebrow: "Guest Gallery",
     pageTitle: "Memories",
     lockedMessage:
