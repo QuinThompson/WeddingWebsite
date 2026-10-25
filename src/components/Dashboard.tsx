@@ -106,7 +106,7 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
               <motion.div variants={assemble({ y: 64, rotate: -12 }, { ...opts, index: 4 })}>
                 <PolaroidCard
                   href="/invite/story"
-                  src="/images/Romantic_Sunset_Beach_Couple_Portrait.png"
+                  src="/images/love_story.jpeg"
                   alt="Shenice and Quinton together at sunset on the beach"
                   caption={wedding.dashboard.storyCaption}
                   rotate={-3.5}

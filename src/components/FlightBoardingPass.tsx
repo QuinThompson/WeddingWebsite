@@ -53,7 +53,7 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
             </div>
             <div>
               <dt className="uppercase tracking-[0.12em] text-taupe">Book by</dt>
-              <dd className="font-bold">{wedding.hotel.bookingDeadlineDisplay}</dd>
+              <dd className="font-medium">{wedding.hotel.bookingDeadlineDisplay}</dd>
             </div>
             <div className="col-span-2">
               <dt className="uppercase tracking-[0.12em] text-taupe">Country</dt>

@@ -169,10 +169,10 @@ export const wedding = {
     intro:
       "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
     noteHeading: "A little note",
-    note: "We’ve carefully chosen each item to match our home and personal style, so we kindly ask that gifts purchased be the exact items listed. Thank you for helping us make our house a home! ❤️",
+    note: "We’ve carefully chosen each item to match our home and personal style, so we kindly ask that gifts purchased be the exact items, colour and amount listed. Thank you for helping us turn our house into a home filled with love, warmth, and beautiful memories!",
     donation: {
-      heading: "Prefer to give money?",
-      note: "A transfer to the account below is just as welcome.",
+      heading: "A Gift From the Heart",
+      note: "Should you wish to give a monetary gift, our banking details are provided below.",
       alternateBankNote:
         "If you use a different bank, or you are sending USD, message us and we’ll share the account information.",
       details: [
@@ -348,11 +348,6 @@ export const wedding = {
       members: [{ name: "Brandon Thompson" }, { name: "Serigo Prentice" }],
     },
     {
-      id: "principal-sponsors",
-      title: "Sponsors",
-      members: [{ name: "Rebekah Clarke" }],
-    },
-    {
       id: "flower-children",
       title: "Flower Girls",
       members: [
@@ -360,14 +355,19 @@ export const wedding = {
         { name: "Samiyah Clarke", role: "Flower Girl" },
       ],
     },
+    {
+      id: "principal-sponsors",
+      title: "Sponsors",
+      members: [{ name: "Rebekah Clarke" }],
+    },
   ] as PartyGroup[],
 
   story: [
     {
       id: "met",
       title: "How We Met",
-      handwrittenLabel: "chapter one",
-      body: "It started on Facebook, with messages that turned into conversations, then into something we both wanted to keep going. We met in person at Shenice’s school on one of her sports days, and that was where friendship settled into something more. From there, we grew into a relationship that felt natural, steady, and ours.",
+      handwrittenLabel: "The First Message",
+      body: "Our story began with a simple message on Facebook, one that sparked conversations neither of us wanted to end. What started as casual chats slowly grew into a beautiful friendship. We eventually met in person at one of Shenice’s school sports days, not knowing that this little moment would become part of something so special. As time went on, our friendship blossomed into something more, and somewhere along the way, we found love in each other. What began with a simple conversation became the start of our forever.",
       image: "/images/how_we_met.png",
       imageAlt: "Phones on a bench at a sports day, where Shenice and Quinton first met",
       imageSide: "left",
@@ -375,8 +375,8 @@ export const wedding = {
     {
       id: "trip",
       title: "Our First Trip",
-      handwrittenLabel: "passport stamps",
-      body: "Tobago was our first trip together, with sunny days, shared laughs, and a few hard moments along the way. Looking back, we hold both the good and the bad with open hands. We wouldn’t trade it. No regrets, only the beginning of learning how to travel through life side by side.",
+      handwrittenLabel: "The First Flight",
+      body: "Tobago will always hold a special place in our hearts. It was our first trip as a couple and our very first adventure away together. From sunny days and endless laughter to the little moments that brought us closer, every experience became part of our story. It was where we began making memories beyond the familiar, discovering new things about each other, and learning what it meant to experience life side by side. Our first getaway, but certainly not our last.",
       image: "/images/IMG_5611.jpg",
       imageAlt: "Shadows of Shenice and Quinton on the sand during their trip to Tobago",
       imageSide: "right",
@@ -384,8 +384,8 @@ export const wedding = {
     {
       id: "jupiter",
       title: "Jupiter",
-      handwrittenLabel: "our daughter",
-      body: "Jupiter is our daughter. She belongs in this story beside the two of us, the reason home feels full, and the reason this wedding is a family celebration, not only a couple’s.",
+      handwrittenLabel: "Our First Child",
+      body: "Our love story wouldn't be complete without our beautiful daughter, Jupiter. She has brought a whole new meaning to love, filling our home with laughter, warmth, and countless precious moments. Through her, we've discovered a love greater than we ever imagined and a bond that continues to grow stronger every day. As we prepare to say “I do,” we're not just celebrating our love for each other, but the beautiful little family we've created and the lifetime of memories still waiting to be made.",
       image: "/images/ultrasound.png",
       imageAlt: "Ultrasound of Jupiter before she was born",
       imageSide: "left",
@@ -401,9 +401,9 @@ export const wedding = {
     },
     {
       id: "destination",
-      title: "Choosing the Destination",
-      handwrittenLabel: "why St Lucia",
-      body: "We chose St Lucia because we wanted more than a ceremony. We wanted a getaway wedding where everyone we love could relax, celebrate, and make memories together. Beautiful scenery, warm air, and room to unwind: St Lucia felt like the right place to gather and begin this next chapter.",
+      title: "Our Forever Begins",
+      handwrittenLabel: "The Next Chapter",
+      body: "From a simple conversation on Facebook to a love that grew into a beautiful family, every chapter has brought us closer to this moment. We've shared laughter, adventures, milestones, and countless memories along the way, with our little Jupiter making our journey even more special. Now, as we prepare to say “I do,” we're looking forward to everything life has waiting for us. Our story is still being written, and we can't wait to begin this next chapter as husband and wife, surrounded by the people we love most.",
       image: "/images/Triangle-altar.jpg",
       imageAlt: "Beach ceremony with a triangular wooden altar facing the sea",
       imageSide: "left",
@@ -418,8 +418,8 @@ export const wedding = {
     },
     {
       id: "plus-one",
-      title: "Plus-ones",
-      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+      title: "Plus Ones",
+      body: "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge and VAT included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       id: "dress-code",
@@ -436,36 +436,26 @@ export const wedding = {
     {
       id: "arrival-time",
       title: "Ceremony Arrival Time",
-      body: "Please arrive by 3:30 PM. Be seated by 3:45 PM. The ceremony begins promptly at 4:00 PM.",
+      body: "Please arrive by 3:30 PM and be seated by 3:45 PM. The ceremony begins promptly at 4:00 PM.",
     },
     {
       id: "photos",
       title: "Photos",
-      body: "Photos are welcome during the ceremony. You can also share your pictures in our Memories gallery.",
+      body: "Photos of our special day are welcome. You can share your pictures in our Memories gallery.",
       href: "/invite/memories",
       linkLabel: "Share photos",
     },
     {
       id: "gifts",
       title: "Gifts",
-      body: "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
+      body: "Here are a few items we would love for our home. Claim an item so we know it’s covered.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
     {
-      id: "passport",
-      title: "Travel Docs",
-      body: "Please ensure your passport, and any other travel documents, are valid for at least six months beyond your travel dates.",
-    },
-    {
-      id: "contact",
-      title: "Contact Person",
-      body: "For wedding questions, email Sarai Cairo, Reservations & Wedding Wizard, at weddings@cbayna.com. Please mention Shenice & Quinton’s wedding (May 12, 2027) so she knows which celebration you’re writing about.",
-    },
-    {
       id: "nursing-station",
       title: "Nursing Station",
-      body: "If you are staying at Coconut Bay and a medical emergency happens, the resort has a nursing station on site.",
+      body: "If you are staying at Coconut Bay Resort it has a nursing station on site for medical emergencies.",
     },
   ] as Reminder[],
 
@@ -617,11 +607,6 @@ export const wedding = {
     driveBackupMessage:
       "Having trouble uploading here? Open our Google Drive folder and add your photos there instead.",
     driveBackupLinkLabel: "Upload on Google Drive",
-  },
-
-  images: {
-    coupleCover: "/images/couple-cover.jpg",
-    coupleCoverAlt: "Portrait placeholder for Shenice and Quinton",
   },
 } as const;
 

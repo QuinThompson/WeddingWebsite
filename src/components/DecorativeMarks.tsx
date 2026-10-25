@@ -76,29 +76,6 @@ export function AirplaneRoute({ className }: { className?: string }) {
   );
 }
 
-export function PostageStamp({
-  label = "St Lucia",
-  className,
-}: {
-  label?: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cx(
-        "relative inline-flex h-16 w-14 flex-col items-center justify-center border-2 border-dashed border-lilac-deep/50 bg-paper/80 text-center text-[0.55rem] uppercase tracking-[0.14em] text-lilac-deep",
-        className,
-      )}
-      aria-hidden
-    >
-      <span className="stamp !transform-none !border-0 !p-0 opacity-90">{label}</span>
-      <span className="mt-1 handwritten text-lg normal-case tracking-normal text-sage-deep">
-        ♡
-      </span>
-    </div>
-  );
-}
-
 export function TornPaperEdge({ className }: { className?: string }) {
   return (
     <svg

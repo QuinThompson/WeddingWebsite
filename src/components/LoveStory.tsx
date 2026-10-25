@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AirplaneRoute, PostageStamp } from "@/components/DecorativeMarks";
+import { AirplaneRoute } from "@/components/DecorativeMarks";
 import { DetailPageShell } from "@/components/DetailPageShell";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { wedding } from "@/data/wedding";
@@ -41,9 +41,6 @@ export function LoveStory() {
                       {chapter.handwrittenLabel}
                     </p>
                   </div>
-                  {index === 0 ? (
-                    <PostageStamp className="absolute -right-2 -top-2" label="Story" />
-                  ) : null}
                 </div>
 
                 <div className={cx("order-1", imageFirst ? "md:order-2" : "md:order-1")}>
