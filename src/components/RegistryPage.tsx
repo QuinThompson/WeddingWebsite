@@ -137,7 +137,7 @@ export function RegistryPage() {
       {/* <p className="mt-2 text-xs text-taupe">
         {usingGoogle
           ? "Claims sync live to your Google Sheet for every guest."
-          : "Google Sheets is not connected yet — claims stay on this device only."}
+          : "Google Sheets is not connected yet. Claims stay on this device only."}
       </p> */}
 
       <div aria-live="polite" className="mt-4 min-h-6 text-sm">

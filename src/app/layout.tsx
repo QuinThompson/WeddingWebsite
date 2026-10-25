@@ -23,7 +23,7 @@ const script = Allura({
 
 export const metadata: Metadata = {
   title: `${wedding.couple.fullNames} Wedding Invitation`,
-  description: `Digital wedding passport for ${wedding.couple.fullNames} — ${wedding.date.display} in ${wedding.destination.display}.`,
+  description: `Digital wedding passport for ${wedding.couple.fullNames}, ${wedding.date.display} in ${wedding.destination.display}.`,
   other: {
     // Older Samsung Internet builds look for this name before they force-dark a page.
     "supported-color-schemes": "light",

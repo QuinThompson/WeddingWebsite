@@ -98,7 +98,7 @@ export const wedding = {
     name: "Eternity Beach",
     address: "Eternity Beach, near Coconut Bay, Vieux Fort, St Lucia",
     description:
-      "Ceremony and reception are held together on Eternity Beach—no venue change after the vows.",
+      "Ceremony and reception are held together on Eternity Beach, with no venue change after the vows.",
     image: "/images/eternity_beach.jpg",
     imageAlt: "Eternity Beach shoreline for the ceremony and reception",
     mapUrl: "https://maps.google.com/?q=Coconut+Bay+Beach+Resort+St+Lucia",
@@ -117,7 +117,7 @@ export const wedding = {
     bookingInstructions:
       "Book Coconut Bay Beach Resort & Spa directly and mention Shenice & Quinton’s wedding (May 12, 2027). Email reservations@cbayresort.com, call 877-252-0304, or visit www.cbayresort.com. Families usually stay in Splash; adults-only travelers can choose Harmony; couples looking for a private plunge-pool suite can choose Serenity at Coconut Bay, on the same property. Please reserve by January 31, 2027.",
     notes:
-      "The resort is our recommended home base for the weekend—steps from ceremony and reception spaces, with beach access and guest services on site.",
+      "The resort is our recommended home base for the weekend, steps from ceremony and reception spaces, with beach access and guest services on site.",
   },
 
   airport: {
@@ -165,7 +165,7 @@ export const wedding = {
   registry: {
     title: "Gift Registry",
     intro:
-      "Here are a few items we would love. Claim an item so we know it is covered—or, if you prefer, a monetary gift is just as welcome.",
+      "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
     donation: {
       heading: "Prefer to give money?",
       note: "A transfer to the account below is just as welcome.",
@@ -188,7 +188,7 @@ export const wedding = {
         id: "gift-kitchenaid-artisan",
         title: "KitchenAid Artisan Stand Mixer",
         description:
-          "KitchenAid Artisan Series stand mixer with pouring shield — a classic for our kitchen.",
+          "KitchenAid Artisan Series stand mixer with pouring shield, a classic for our kitchen.",
         storeLabel: "Amazon",
         storeUrl:
           "https://www.amazon.com/KitchenAid-KSM150PSAC-Artisan-Pouring-Shield/dp/B004GUVD6K",
@@ -300,9 +300,10 @@ export const wedding = {
       id: "brunch",
       title: "Farewell Brunch",
       date: "May 13, 2027",
-      time: "11:00 AM",
+      time: "TBD",
       venue: "Coconut Bay Resort",
-      description: "A relaxed morning together before journeys home begin.",
+      description:
+        "A relaxed morning together before journeys home begin. The resort has not confirmed this yet.",
       icon: "brunch",
     },
   ] as TimelineEvent[],
@@ -358,7 +359,7 @@ export const wedding = {
       id: "met",
       title: "How We Met",
       handwrittenLabel: "chapter one",
-      body: "It started on Facebook—messages that turned into conversations, then into something we both wanted to keep going. We met in person at Shenice’s school on one of her sports days, and that was where friendship settled into something more. From there, we grew into a relationship that felt natural, steady, and ours.",
+      body: "It started on Facebook, with messages that turned into conversations, then into something we both wanted to keep going. We met in person at Shenice’s school on one of her sports days, and that was where friendship settled into something more. From there, we grew into a relationship that felt natural, steady, and ours.",
       image: "/images/couple-story-01.jpg",
       imageAlt: "Portrait recalling how Shenice and Quinton first connected",
       imageSide: "left",
@@ -367,7 +368,7 @@ export const wedding = {
       id: "trip",
       title: "Our First Trip",
       handwrittenLabel: "passport stamps",
-      body: "Tobago was our first trip together—sunny days, shared laughs, and a few hard moments along the way. Looking back, we hold both the good and the bad with open hands. We wouldn’t trade it. No regrets—only the beginning of learning how to travel through life side by side.",
+      body: "Tobago was our first trip together, with sunny days, shared laughs, and a few hard moments along the way. Looking back, we hold both the good and the bad with open hands. We wouldn’t trade it. No regrets, only the beginning of learning how to travel through life side by side.",
       image: "/images/couple-story-02.jpg",
       imageAlt: "Travel-inspired scene recalling Shenice and Quinton’s first trip to Tobago",
       imageSide: "right",
@@ -376,7 +377,7 @@ export const wedding = {
       id: "jupiter",
       title: "Jupiter",
       handwrittenLabel: "our daughter",
-      body: "Jupiter is our daughter. She belongs in this story beside the two of us — the reason home feels full, and the reason this wedding is a family celebration, not only a couple’s.",
+      body: "Jupiter is our daughter. She belongs in this story beside the two of us, the reason home feels full, and the reason this wedding is a family celebration, not only a couple’s.",
       image: "/images/couple-cover.jpg",
       imageAlt: "Portrait of Shenice and Quinton",
       imageSide: "left",
@@ -385,7 +386,7 @@ export const wedding = {
       id: "proposal",
       title: "The Proposal",
       handwrittenLabel: "the yes",
-      body: "The proposal was simple and sweet, kept quiet until the moment arrived—though Jupiter nearly gave the secret away. It happened in our new home, close to our yearly anniversary. Shenice was happily surprised; she never saw it coming. A quiet yes, in a place that already felt like forever.",
+      body: "The proposal was simple and sweet, kept quiet until the moment arrived, though Jupiter nearly gave the secret away. It happened in our new home, close to our yearly anniversary. Shenice was happily surprised; she never saw it coming. A quiet yes, in a place that already felt like forever.",
       image: "/images/couple-story-03.jpg",
       imageAlt: "Romantic portrait suggesting the proposal at home",
       imageSide: "right",
@@ -394,7 +395,7 @@ export const wedding = {
       id: "destination",
       title: "Choosing the Destination",
       handwrittenLabel: "why St Lucia",
-      body: "We chose St Lucia because we wanted more than a ceremony—we wanted a getaway wedding where everyone we love could relax, celebrate, and make memories together. Beautiful scenery, warm air, and room to unwind: St Lucia felt like the right place to gather and begin this next chapter.",
+      body: "We chose St Lucia because we wanted more than a ceremony. We wanted a getaway wedding where everyone we love could relax, celebrate, and make memories together. Beautiful scenery, warm air, and room to unwind: St Lucia felt like the right place to gather and begin this next chapter.",
       image: "/images/couple-story-04.jpg",
       imageAlt: "Coastal St Lucia atmosphere representing the chosen destination",
       imageSide: "left",
@@ -452,7 +453,7 @@ export const wedding = {
     {
       id: "gifts",
       title: "Gifts",
-      body: "Here are a few items we would love. Claim an item so we know it is covered—or, if you prefer, a monetary gift is just as welcome.",
+      body: "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -520,9 +521,9 @@ export const wedding = {
     recommendedAirport:
       "Hewanorra International Airport (UVF) is recommended because it is the closest airport to Coconut Bay. George F. L. Charles Airport (SLU) is an alternate.",
     airportTransfers:
-      "If you are staying at Coconut Bay, free transfers are included for arrivals at UVF—share your flight details with the resort reservations team so they can coordinate your arrival. Arrivals via SLU are a longer drive to the resort on the south of the island, so those guests will need to arrange their own transfer.",
+      "If you are staying at Coconut Bay, free transfers are included for arrivals at UVF. Share your flight details with the resort reservations team so they can coordinate your arrival. Arrivals via SLU are a longer drive to the resort on the south of the island, so those guests will need to arrange their own transfer.",
     hotel:
-      "Coconut Bay Beach Resort & Spa is our recommended stay for the wedding weekend—close to ceremony and reception settings, with beach access and guest services on site. Splash is family-friendly. Harmony is adults-only (18+). Serenity at Coconut Bay is a couples-only option on the same property: private plunge-pool suites, with full use of the resort.",
+      "Coconut Bay Beach Resort & Spa is our recommended stay for the wedding weekend, close to ceremony and reception settings, with beach access and guest services on site. Splash is family-friendly. Harmony is adults-only (18+). Serenity at Coconut Bay is a couples-only option on the same property: private plunge-pool suites, with full use of the resort.",
     bookingInstructions:
       "Book directly with Coconut Bay by January 31, 2027 and mention Shenice & Quinton’s wedding (May 12, 2027). Email reservations@cbayresort.com, call 877-252-0304 (North America) or 758-459-6000, or visit www.cbayresort.com. Confirm rates and cancellation terms with the resort.",
   },
@@ -572,7 +573,7 @@ export const wedding = {
     {
       question: "What about gifts?",
       answer:
-        "Here are a few items we would love. Claim an item so we know it is covered—or, if you prefer, a monetary gift is just as welcome.",
+        "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -613,9 +614,9 @@ export const wedding = {
     pageEyebrow: "Guest Gallery",
     pageTitle: "Memories",
     lockedMessage:
-      "The guest Memories gallery opens on the wedding day — May 12th, 2027. Check back then to share your photos.",
+      "The guest Memories gallery opens on the wedding day, May 12th, 2027. Check back then to share your photos.",
     liveMessage:
-      "Share photos from the celebration (up to about 40MB — large photos are compressed automatically). When Google is connected, uploads go to the couple’s Drive folder so everyone can browse them.",
+      "Share photos from the celebration, up to about 40MB. Large photos are compressed automatically. When Google is connected, uploads go to the couple’s Drive folder so everyone can browse them.",
     uploadCta: "Upload a photo",
     emptyState: "No guest photos yet. Be the first to share a memory.",
     /**

@@ -157,7 +157,7 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
           </motion.div>
 
           <motion.nav
-            className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.7rem]"
+            className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[0.9rem]"
             aria-label="More invitation pages"
             variants={assemble({ y: 18 }, { ...opts, index: 11 })}
           >
@@ -167,45 +167,30 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
             >
               Attire
             </DashboardNavLink>
-            <span className="text-taupe/50" aria-hidden>
-              ·
-            </span>
             <DashboardNavLink
               href="/invite/timeline"
               className="inline-flex min-h-10 items-center text-lilac-deep underline-offset-2 hover:underline"
             >
               Timeline
             </DashboardNavLink>
-            {/* <span className="text-taupe/50" aria-hidden>
-              ·
-            </span>
-            <DashboardNavLink
+            {/* <DashboardNavLink
               href="/invite/destination"
               className="inline-flex min-h-10 items-center text-lilac-deep underline-offset-2 hover:underline"
             >
               Destination
             </DashboardNavLink> */}
-            <span className="text-taupe/50" aria-hidden>
-              ·
-            </span>
             <DashboardNavLink
               href="/invite/party"
               className="inline-flex min-h-10 items-center text-lilac-deep underline-offset-2 hover:underline"
             >
               Entourage
             </DashboardNavLink>
-            <span className="text-taupe/50" aria-hidden>
-              ·
-            </span>
             <DashboardNavLink
               href="/invite/registry"
               className="inline-flex min-h-10 items-center text-lilac-deep underline-offset-2 hover:underline"
             >
               Registry
             </DashboardNavLink>
-            <span className="text-taupe/50" aria-hidden>
-              ·
-            </span>
             <DashboardNavLink
               href="/invite/rsvp"
               className="inline-flex min-h-10 items-center text-lilac-deep underline-offset-2 hover:underline"

@@ -678,7 +678,7 @@ export function RSVPForm() {
           <div aria-live="polite" className="min-h-6 text-sm">
             {status === "success" ? (
               <p className="text-sage-deep">
-                Thank you—your RSVP has been received. We can’t wait to celebrate with you.
+                Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
                 {notedPlusOne
                   ? ` Please pay for each plus-one by ${wedding.deadlines.rsvpDisplay}, or that plus-one will be canceled.`
                   : ""}
