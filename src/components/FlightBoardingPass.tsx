@@ -30,11 +30,11 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
           <div className="mt-2.5 space-y-1.5 text-[0.7rem]">
             <p className="break-words">
               <span className="font-semibold uppercase tracking-[0.12em] text-taupe">From</span>{" "}
-              <span className="text-charcoal">{wedding.hotel.name}</span>
+              <span className="text-charcoal">Wherever you are</span>
             </p>
             <p className="break-words">
               <span className="font-semibold uppercase tracking-[0.12em] text-taupe">To</span>{" "}
-              <span className="text-charcoal">{wedding.ceremony.name}</span>
+              <span className="text-charcoal">Eternity Beach, Coconut Bay Resort</span>
             </p>
           </div>
 
@@ -54,6 +54,10 @@ export function FlightBoardingPass({ className }: FlightBoardingPassProps) {
             <div>
               <dt className="uppercase tracking-[0.12em] text-taupe">Book by</dt>
               <dd className="font-medium">{wedding.hotel.bookingDeadlineDisplay}</dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="uppercase tracking-[0.12em] text-taupe">Country</dt>
+              <dd className="font-medium">{wedding.destination.display}</dd>
             </div>
           </dl>
 

@@ -135,8 +135,8 @@ export const wedding = {
     originLabel: "Your City",
     destinationCode: "UVF",
     destinationCity: "St Lucia",
-    recommendedArrivalDisplay: "May 11, 2027",
-    recommendedArrivalIso: "2027-05-10",
+    recommendedArrivalDisplay: "May 12, 2027",
+    recommendedArrivalIso: "2027-05-12",
     flightBookingUrl: "https://www.google.com/travel/flights",
   },
 
@@ -167,7 +167,9 @@ export const wedding = {
   registry: {
     title: "Gift Registry",
     intro:
-      "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
+      "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
+    noteHeading: "A little note",
+    note: "We’ve carefully chosen each item to match our home and personal style, so we kindly ask that gifts purchased be the exact items listed. Thank you for helping us make our house a home! ❤️",
     donation: {
       heading: "Prefer to give money?",
       note: "A transfer to the account below is just as welcome.",
@@ -211,7 +213,7 @@ export const wedding = {
     memoriesLockedLabel: "Opens on the wedding day",
     remindersEyebrow: "Guest",
     remindersTitle: "Frequently Asked Questions",
-    remindersCta: "Ask here",
+    remindersCta: "Click here",
     registryTitle: "Gift Registry",
     registryCta: "View gifts",
     registryTagEyebrow: "Wedding",
@@ -456,7 +458,7 @@ export const wedding = {
     {
       id: "gifts",
       title: "Gifts",
-      body: "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
+      body: "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -574,7 +576,7 @@ export const wedding = {
     {
       question: "What about gifts?",
       answer:
-        "Here are a few items we would love. Claim an item so we know it is covered. Or, if you prefer, a monetary gift is just as welcome.",
+        "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
       href: "/invite/registry",
       linkLabel: "Gift here",
     },
@@ -609,7 +611,7 @@ export const wedding = {
      * Guest photo sharing unlocks at the start of the wedding day.
      * Set forceUnlock to true while designing/testing before May 12, 2027.
      */
-    forceUnlock: true,
+    forceUnlock: false,
     unlockIso: "2027-05-12T00:00:00",
     placeholderImage: "/images/Elegant_Wedding_photo_Memories.png",
     placeholderAlt: "Instant camera with wedding photos and flowers",

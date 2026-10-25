@@ -88,7 +88,7 @@ export function InvitationDocument({ className }: InvitationDocumentProps) {
                   <dd className="font-semibold text-charcoal">Wedding</dd>
                 </div>
                 <div>
-                  <dt className="text-taupe">City</dt>
+                  <dt className="text-taupe">Country</dt>
                   <dd className="break-words font-semibold text-charcoal">
                     {wedding.destination.display}
                   </dd>

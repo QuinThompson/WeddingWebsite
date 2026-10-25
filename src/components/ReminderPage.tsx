@@ -6,7 +6,7 @@ import { wedding } from "@/data/wedding";
 
 export function ReminderPage() {
   return (
-    <DetailPageShell title="FAQ" eyebrow="Before You Travel" tone="lilac">
+    <DetailPageShell title={wedding.dashboard.remindersTitle} tone="lilac">
       <div className="paper-card -mt-2 space-y-0 overflow-hidden border border-lilac/30">
         {wedding.reminders.map((reminder, index) => (
           <ScrollReveal key={reminder.id}>

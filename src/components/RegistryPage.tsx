@@ -117,6 +117,10 @@ export function RegistryPage() {
   return (
     <DetailPageShell title={wedding.registry.title} eyebrow="Gifts">
       <p className="text-sm leading-relaxed text-charcoal/80">{wedding.registry.intro}</p>
+      <section className="paper-card mt-5 border border-taupe/30 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold text-lilac-deep">{wedding.registry.noteHeading}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/80">{wedding.registry.note}</p>
+      </section>
       <section className="paper-card mt-5 border border-lilac/35 p-4 sm:p-5">
         <h2 className="display text-2xl text-lilac-deep">{wedding.registry.donation.heading}</h2>
         <p className="mt-2 text-sm leading-relaxed text-charcoal/80">{wedding.registry.donation.note}</p>

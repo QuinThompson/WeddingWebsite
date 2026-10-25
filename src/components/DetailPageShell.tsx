@@ -20,7 +20,7 @@ export function DetailPageShell({
 }: DetailPageShellProps) {
   const toneClass =
     tone === "lilac"
-      ? "bg-[linear-gradient(180deg,#78658F_0%,#8f7aa6_38%,#f8f5ee_38%)]"
+      ? "bg-[linear-gradient(180deg,#78658F_0%,#8d7aa4_18%,#e4dceb_52%,#f8f5ee_78%)]"
       : tone === "sage"
         ? "bg-[linear-gradient(180deg,#66745E_0%,#7f8d76_38%,#f8f5ee_38%)]"
         : "paper-texture";

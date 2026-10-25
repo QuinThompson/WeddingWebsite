@@ -22,10 +22,7 @@ export function FaqCard({ className }: FaqCardProps) {
     >
       <div className="absolute inset-y-0 left-0 w-1.5 bg-lilac" aria-hidden />
       <div className="pl-1">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-lilac-deep">
-          Before you travel
-        </p>
-        <p className="display mt-1 text-2xl leading-none text-charcoal">
+        <p className="display text-2xl leading-none text-charcoal">
           {wedding.dashboard.remindersTitle}
         </p>
         <p className="mt-1.5 text-[0.72rem] font-medium text-charcoal underline underline-offset-2">
