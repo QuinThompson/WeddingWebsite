@@ -2,7 +2,30 @@ const KEYS = {
   opening: "wedding-opening-transition",
   fromDetail: "wedding-from-detail",
   dashboardScroll: "wedding-dashboard-scroll",
+  rsvpNotice: "wedding-rsvp-notice",
 } as const;
+
+export type RsvpNotice = "received" | "paid";
+
+let cachedRsvpNotice: RsvpNotice | null | undefined;
+
+export function markRsvpSubmitted(paidPlusOne: boolean) {
+  const notice: RsvpNotice = paidPlusOne ? "paid" : "received";
+  cachedRsvpNotice = notice;
+  sessionStorage.setItem(KEYS.rsvpNotice, notice);
+}
+
+export function peekRsvpNotice(): RsvpNotice | null {
+  if (cachedRsvpNotice !== undefined) return cachedRsvpNotice;
+  const value = sessionStorage.getItem(KEYS.rsvpNotice);
+  cachedRsvpNotice = value === "paid" || value === "received" ? value : null;
+  return cachedRsvpNotice;
+}
+
+export function dismissRsvpNotice() {
+  cachedRsvpNotice = null;
+  sessionStorage.removeItem(KEYS.rsvpNotice);
+}
 
 export function markOpeningTransition() {
   sessionStorage.setItem(KEYS.opening, "1");

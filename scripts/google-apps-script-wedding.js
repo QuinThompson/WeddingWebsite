@@ -45,7 +45,8 @@ var RSVP_HEADERS = [
   "Hotel Status",
   "Message",
   "Adult Count",
-  "Child Count",
+  "Child Count below 12",
+  "Child Count above 12",
   "Adults Detail",
   "Children Detail",
   "Invitation Code",
@@ -203,7 +204,17 @@ function handleRsvp_(data) {
 
     var attending = String(data.attending || "");
     var adultCount = attending === "yes" ? Number(data.adultCount || 0) : 0;
-    var childCount = attending === "yes" ? Number(data.childCount || 0) : 0;
+    var below12 = 0;
+    var above12 = 0;
+    if (attending === "yes") {
+      if (data.childCountBelow12 !== undefined && String(data.childCountBelow12) !== "") {
+        below12 = Number(data.childCountBelow12) || 0;
+        above12 = Number(data.childCountAbove12) || 0;
+      } else {
+        below12 = Number(data.childCount) || 0;
+      }
+    }
+    var childCount = below12 + above12;
     var plusOneAdults = attending === "yes" ? Math.max(0, adultCount - guest.allowedAdults) : 0;
     var plusOneChildren = attending === "yes" ? Math.max(0, childCount - guest.allowedChildren) : 0;
     var freeSlots = attending === "yes" && guest.plusOneAllowed ? 1 : 0;
@@ -225,7 +236,8 @@ function handleRsvp_(data) {
       data.hotelStatus || "",
       data.message || "",
       data.adultCount || "",
-      data.childCount || "",
+      below12,
+      above12,
       data.adultsDetail || "",
       data.childrenDetail || "",
       guest.code,
@@ -695,11 +707,6 @@ function alignRsvpColumns_(sheet) {
   var lastCol = Math.max(sheet.getLastColumn(), 1);
   var current = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
 
-  if (headersMatch_(current, RSVP_HEADERS)) {
-    ensureHeaders_(sheet, RSVP_HEADERS);
-    return;
-  }
-
   if (headersMatch_(current, RSVP_HEADERS_MISSING_MOBILE)) {
     sheet.getRange(1, 1, 1, RSVP_HEADERS_WITH_EXTRAS.length).setValues([RSVP_HEADERS_WITH_EXTRAS]);
     current = RSVP_HEADERS_WITH_EXTRAS.slice();
@@ -713,7 +720,70 @@ function alignRsvpColumns_(sheet) {
     sheet.deleteColumn(9); // Meal Preference
   }
 
+  splitChildCountColumn_(sheet);
   ensureHeaders_(sheet, RSVP_HEADERS);
+}
+
+/**
+ * Renames Child Count in place and inserts Child Count above 12 beside it.
+ * Existing rows keep their old total under below 12 unless Children Detail
+ * lists an age for every child, in which case the counts are split.
+ */
+function splitChildCountColumn_(sheet) {
+  var lastCol = Math.max(sheet.getLastColumn(), 1);
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  if (headerIndex_(header, "Child Count below 12") >= 0 && headerIndex_(header, "Child Count above 12") >= 0) {
+    return;
+  }
+  var old = headerIndex_(header, "Child Count");
+  if (old < 0) return;
+
+  var detailCol = headerIndex_(header, "Children Detail");
+  var lastRow = sheet.getLastRow();
+  var snapshots = [];
+  if (lastRow >= 2) {
+    var body = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+    for (var r = 0; r < body.length; r++) {
+      snapshots.push({
+        count: body[r][old],
+        detail: detailCol >= 0 ? body[r][detailCol] : "",
+      });
+    }
+  }
+
+  sheet.getRange(1, old + 1).setValue("Child Count below 12");
+  sheet.insertColumnAfter(old + 1);
+  sheet.getRange(1, old + 2).setValue("Child Count above 12").setFontWeight("bold");
+
+  if (!snapshots.length) return;
+  var belowValues = [];
+  var aboveValues = [];
+  for (var i = 0; i < snapshots.length; i++) {
+    var split = splitStoredChildCount_(snapshots[i].count, snapshots[i].detail);
+    belowValues.push([split.below]);
+    aboveValues.push([split.above]);
+  }
+  sheet.getRange(2, old + 1, snapshots.length, 1).setValues(belowValues);
+  sheet.getRange(2, old + 2, snapshots.length, 1).setValues(aboveValues);
+}
+
+function splitStoredChildCount_(count, detail) {
+  var ages = [];
+  var pattern = /age\s+(\d+)/gi;
+  var match;
+  var text = String(detail || "");
+  while ((match = pattern.exec(text))) ages.push(Number(match[1]));
+  var oldCount = Number(count);
+  if (!ages.length || ages.length !== oldCount) {
+    return { below: count === "" || count === null ? "" : count, above: "" };
+  }
+  var below = 0;
+  var above = 0;
+  for (var i = 0; i < ages.length; i++) {
+    if (ages[i] <= 12) below++;
+    else above++;
+  }
+  return { below: below, above: above };
 }
 
 /** Extends row 1 when new columns are added (does not rewrite existing data). */

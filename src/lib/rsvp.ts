@@ -21,6 +21,26 @@ export type InvitationAllowance = {
   plusOneAllowed: boolean;
 };
 
+/** Coconut Bay prices ages 12 and under as children. Older children stay listed as children. */
+export const RESORT_CHILD_MAX_AGE = 12;
+
+export function countChildrenByResortAge(children: { age: string }[]) {
+  let below12 = 0;
+  let above12 = 0;
+  let unstated = 0;
+  for (const child of children) {
+    const age = Number(child.age);
+    if (!String(child.age).trim() || Number.isNaN(age) || age < 0) {
+      unstated += 1;
+    } else if (age <= RESORT_CHILD_MAX_AGE) {
+      below12 += 1;
+    } else {
+      above12 += 1;
+    }
+  }
+  return { below12, above12, unstated, total: children.length };
+}
+
 export function plusOneCounts(allowance: InvitationAllowance, adultCount: number, childCount: number) {
   const extraAdults = Math.max(0, adultCount - allowance.allowedAdults);
   const extraChildren = Math.max(0, childCount - allowance.allowedChildren);
@@ -58,6 +78,28 @@ export function plusOneTag(
   return freeSlotLeft && extraNumber === 1 ? "included" : "paid";
 }
 
+/** Paid child plus-ones split by Coconut Bay's age rule. Ages over 12 use the adult rate. */
+export function paidChildAgeBands(
+  allowance: InvitationAllowance,
+  adultCount: number,
+  children: { age: string }[],
+) {
+  const extraAdults = Math.max(0, adultCount - allowance.allowedAdults);
+  const freeSlotLeft = allowance.plusOneAllowed && extraAdults === 0;
+  let below12 = 0;
+  let above12 = 0;
+  children.forEach((child, index) => {
+    const extraNumber = index + 1 - allowance.allowedChildren;
+    if (extraNumber <= 0) return;
+    if (freeSlotLeft && extraNumber === 1) return;
+    const age = Number(child.age);
+    if (Number.isNaN(age)) return;
+    if (age > RESORT_CHILD_MAX_AGE) above12 += 1;
+    else below12 += 1;
+  });
+  return { below12, above12 };
+}
+
 export type RsvpPayload = {
   /** Contact / primary guest submitting the RSVP */
   invitationCode: string;
@@ -79,6 +121,11 @@ export type RsvpPayload = {
   /** Derived totals for sheets / CSV */
   guestCount: string;
   adultCount: string;
+  /** Children ages 12 and under. */
+  childCountBelow12: string;
+  /** Children older than 12, including 18 and older. Coconut Bay prices these guests as adults. */
+  childCountAbove12: string;
+  /** All listed children, used for the invitation's child allowance. */
   childCount: string;
   /** Human-readable party summary */
   guestNames: string;
@@ -97,7 +144,13 @@ function formatAdultsDetail(primaryName: string, adults: RsvpAdultGuest[]) {
 
 function formatChildrenDetail(children: RsvpChildGuest[]) {
   if (children.length === 0) return "";
-  return children.map((child) => `${child.name} (age ${child.age})`).join("; ");
+  return children
+    .map((child) => {
+      const age = Number(child.age);
+      const band = age >= 18 ? ", 18 or older" : age > RESORT_CHILD_MAX_AGE ? ", over 12" : "";
+      return `${child.name} (age ${child.age}${band})`;
+    })
+    .join("; ");
 }
 
 function formatGuestNamesSummary(
@@ -108,7 +161,11 @@ function formatGuestNamesSummary(
   const parts = [
     `${primaryName} (adult)`,
     ...adults.map((a) => `${a.name} (adult)`),
-    ...children.map((c) => `${c.name} (child, age ${c.age})`),
+    ...children.map((child) => {
+      const age = Number(child.age);
+      const label = age >= 18 ? "child 18 or older" : age > RESORT_CHILD_MAX_AGE ? "child over 12" : "child";
+      return `${child.name} (${label}, age ${child.age})`;
+    }),
   ];
   return parts.join("; ");
 }
@@ -119,11 +176,13 @@ export function buildRsvpPartyFields(input: {
   children: RsvpChildGuest[];
 }) {
   const adultTotal = 1 + input.adults.length;
-  const childTotal = input.children.length;
+  const bands = countChildrenByResortAge(input.children);
   return {
-    guestCount: String(adultTotal + childTotal),
+    guestCount: String(adultTotal + bands.total),
     adultCount: String(adultTotal),
-    childCount: String(childTotal),
+    childCountBelow12: String(bands.below12),
+    childCountAbove12: String(bands.above12),
+    childCount: String(bands.total),
     guestNames: formatGuestNamesSummary(input.fullName, input.adults, input.children),
     adultsDetail: formatAdultsDetail(input.fullName, input.adults),
     childrenDetail: formatChildrenDetail(input.children),
@@ -191,6 +250,8 @@ export function normalizeRsvpPayload(raw: unknown): RsvpPayload | null {
       : {
           guestCount: "0",
           adultCount: "0",
+          childCountBelow12: "0",
+          childCountAbove12: "0",
           childCount: "0",
           guestNames: "",
           adultsDetail: "",

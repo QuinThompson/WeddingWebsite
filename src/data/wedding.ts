@@ -547,7 +547,7 @@ export const wedding = {
     {
       question: "Can I bring a plus-one?",
       answer:
-        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+        "Your invitation includes a set number of adults and children. If a plus-one is included, that guest is at no charge. If a plus-one is not included, you may still add one if you are willing to cover the guest fee: about US$175 for an adult and about US$51 for a child ages 4–12 (resort service charge and vat included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
     },
     {
       question: "What about gifts?",
@@ -579,7 +579,7 @@ export const wedding = {
       { value: "no", label: "Unable to attend" },
     ],
     additionalGuestNotice:
-      "A paid plus-one is about US$128 for an adult and about US$50 for a child ages 4–12 (resort service charge, VAT, and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
+      "A paid plus-one is about US$175 for an adult and about US$51 for a child ages 4–12 (resort service charge and tax included). Price is subject to change. Any guest payment is due by January 31, 2027. If payment is not received by that date, their spot will be canceled.",
   },
 
   memories: {

@@ -169,9 +169,9 @@ export function InvitationDocument({ className }: InvitationDocumentProps) {
                 </dd>
               </div>
             </dl>
-            <p className="handwritten mt-3 text-center text-[1.05rem] leading-snug normal-case tracking-normal text-lilac-deep">
+            {/* <p className="handwritten mt-3 text-center text-[1.05rem] leading-snug normal-case tracking-normal text-lilac-deep">
               One destination. Two hearts. A lifetime of love.
-            </p>
+            </p> */}
           </div>
 
           <DashboardNavLink

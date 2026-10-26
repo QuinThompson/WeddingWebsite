@@ -12,6 +12,7 @@ import { RegistryCard } from "@/components/RegistryCard";
 import { FaqCard } from "@/components/FaqCard";
 import { wedding } from "@/data/wedding";
 import { assemble, dashboardContainer, elegantEase } from "@/lib/motion";
+import { dismissRsvpNotice, peekRsvpNotice, type RsvpNotice } from "@/lib/session";
 
 // Hidden with passport for now — restore with MiniPassport block below:
 // import { DashboardCard } from "@/components/DashboardCard";
@@ -25,8 +26,17 @@ type DashboardProps = {
 export function Dashboard({ shortened = false, fromOpening = false }: DashboardProps) {
   const reduced = useReducedMotion();
   const [unlocked, setUnlocked] = useState(false);
+  const [rsvpNotice, setRsvpNotice] = useState<RsvpNotice | null>(null);
   const interactive = Boolean(reduced || shortened || unlocked);
   const opts = { shortened, reduced: Boolean(reduced) };
+
+  useEffect(() => {
+    const notice = peekRsvpNotice();
+    setRsvpNotice(notice);
+    if (!notice) return;
+    const id = window.setTimeout(() => dismissRsvpNotice(), 0);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     if (reduced || shortened) return;
@@ -57,6 +67,39 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
       ) : null}
 
       <div className="relative mx-auto invite-shell pb-8 pt-3">
+        {rsvpNotice ? (
+          <div
+            role="status"
+            className="relative z-40 mb-4 rounded-sm border border-lilac/35 bg-lilac/15 px-4 py-3 text-sm leading-relaxed text-charcoal/85"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
+                RSVP received
+              </p>
+              <button
+                type="button"
+                className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                onClick={() => {
+                  dismissRsvpNotice();
+                  setRsvpNotice(null);
+                }}
+              >
+                Dismiss
+              </button>
+            </div>
+            <p className="mt-2">
+              Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
+              {rsvpNotice === "paid" ? (
+                <>
+                  {" "}
+                  Please pay for each additional guest by{" "}
+                  <span className="font-bold">{wedding.deadlines.guestPaymentDisplay}</span>, or
+                  their spot will be canceled.
+                </>
+              ) : null}
+            </p>
+          </div>
+        ) : null}
         <motion.div
           className="relative"
           variants={dashboardContainer}

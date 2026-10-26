@@ -1,10 +1,14 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { useReducedMotion } from "framer-motion";
 import { DetailPageShell } from "@/components/DetailPageShell";
 import { wedding } from "@/data/wedding";
 import {
   buildRsvpPartyFields,
+  countChildrenByResortAge,
+  paidChildAgeBands,
   plusOneCounts,
   plusOneTag,
   type InvitationAllowance,
@@ -12,6 +16,7 @@ import {
   type RsvpChildGuest,
   type RsvpPayload,
 } from "@/lib/rsvp";
+import { markRsvpSubmitted } from "@/lib/session";
 import { saveRsvp } from "@/lib/store";
 import { cx } from "@/lib/utils";
 
@@ -41,9 +46,9 @@ const emptyChild = (): RsvpChildGuest => ({
   age: "",
 });
 
-/** "Brandon Thompson, Niki" becomes "Brandon Thompson". */
+/** "Test 1 and test 2" or "Brandon Thompson, Niki" becomes the first listed name. */
 function firstListedName(household: string) {
-  const name = household.split(",")[0]?.trim() ?? "";
+  const name = household.split(/\s+and\s+/i)[0]?.split(",")[0]?.trim() ?? "";
   if (!name || name === "Your invitation") return "";
   return name;
 }
@@ -81,8 +86,8 @@ function validate(values: FormState): FormErrors {
     }
     for (const child of values.children) {
       const ageNum = Number(child.age);
-      if (!child.name.trim() || !child.age.trim() || Number.isNaN(ageNum) || ageNum < 0 || ageNum > 17) {
-        errors.children = "Each child needs a name and age (0–17).";
+      if (!child.name.trim() || !child.age.trim() || Number.isNaN(ageNum) || ageNum < 0) {
+        errors.children = "Each child needs a name and age.";
         break;
       }
     }
@@ -117,6 +122,8 @@ function toPayload(values: FormState, invitation: InvitationAllowance): RsvpPayl
       : {
           guestCount: "0",
           adultCount: "0",
+          childCountBelow12: "0",
+          childCountAbove12: "0",
           childCount: "0",
           guestNames: "",
           adultsDetail: "",
@@ -195,6 +202,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 
 export function RSVPForm() {
   const formId = useId();
+  const router = useRouter();
+  const reducedMotion = useReducedMotion();
   const [values, setValues] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -230,9 +239,10 @@ export function RSVPForm() {
     setSubmitError(null);
     try {
       await submitRsvp(values, invitation);
-      setNotedPlusOne(plusOnes.paidAdults + plusOnes.paidChildren > 0);
+      const paidPlusOne = plusOnes.paidAdults + plusOnes.paidChildren > 0;
+      setNotedPlusOne(paidPlusOne);
+      markRsvpSubmitted(paidPlusOne);
       setStatus("success");
-      setValues(initialState);
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : "Something went wrong while sending your RSVP. Please try again.",
@@ -240,6 +250,15 @@ export function RSVPForm() {
       setStatus("error");
     }
   };
+
+  useEffect(() => {
+    if (status !== "success") return;
+    const delay = reducedMotion ? 900 : 2600;
+    const id = window.setTimeout(() => {
+      router.push("/invite");
+    }, delay);
+    return () => window.clearTimeout(id);
+  }, [reducedMotion, router, status]);
 
   const onLookup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -329,6 +348,33 @@ export function RSVPForm() {
     );
   }
 
+  if (status === "success") {
+    return (
+      <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
+        <div className="paper-card relative overflow-hidden border border-lilac/35 p-5 sm:p-6" role="status">
+          <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
+          <div className="pl-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
+              RSVP received
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-charcoal/85">
+              Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
+              {notedPlusOne ? (
+                <>
+                  {" "}
+                  Please pay for each additional guest by{" "}
+                  <span className="font-bold">{wedding.deadlines.guestPaymentDisplay}</span>, or
+                  their spot will be canceled.
+                </>
+              ) : null}
+            </p>
+            <p className="mt-4 text-sm text-charcoal/70">Taking you back to your invitation.</p>
+          </div>
+        </div>
+      </DetailPageShell>
+    );
+  }
+
   if (alreadyResponded) {
     return (
       <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
@@ -364,8 +410,11 @@ export function RSVPForm() {
   }
 
   const adultTotal = values.attending === "yes" ? 1 + values.adults.length : 0;
-  const childTotal = values.attending === "yes" ? values.children.length : 0;
+  const listedChildren = values.attending === "yes" ? values.children : [];
+  const childBands = countChildrenByResortAge(listedChildren);
+  const childTotal = childBands.total;
   const plusOnes = plusOneCounts(invitation, adultTotal, childTotal);
+  const paidChildBands = paidChildAgeBands(invitation, adultTotal, listedChildren);
   const nextAdultTag = plusOneTag(invitation, "adult", values.adults.length, adultTotal);
   const nextChildTag = plusOneTag(invitation, "child", values.children.length, adultTotal);
 
@@ -382,13 +431,14 @@ export function RSVPForm() {
             Your invitation includes {invitation.allowedAdults}{" "}
             {invitation.allowedAdults === 1 ? "adult" : "adults"} (including yourself) and{" "}
             {invitation.allowedChildren}{" "}
-            {invitation.allowedChildren === 1 ? "child" : "children"}.
+            {invitation.allowedChildren === 1 ? "child" : "children"}.{" "}
             {invitation.plusOneAllowed
-              ? " One additional guest is included. A further guest is welcome at your own expense."
-              : " You’re welcome to bring an additional guest at your own expense."}{" "}
-            Payment is due by{" "}
-            <span className="font-bold text-charcoal">{wedding.deadlines.guestPaymentDisplay}</span>
-            , or their spot will be canceled.
+              ? "A plus-one is included, and that guest is at no charge. Any further guest is welcome if you cover the guest fee."
+              : "A plus-one is not included. You may still add one if you are willing to cover the guest fee."}{" "}
+            About US$175 for an adult and about US$51 for a child ages 4–12 (resort service charge and VAT
+            included). Price is subject to change. Any guest payment is due by{" "}
+            <span className="font-bold text-charcoal">{wedding.deadlines.guestPaymentDisplay}</span>. If
+            payment is not received by that date, their spot will be canceled.
           </p>
           <button
             type="button"
@@ -598,7 +648,9 @@ export function RSVPForm() {
                   </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
-                  Children on this invitation, with name and age. Anyone beyond the{" "}
+                  Add each child with a name and age. Ages 12 and under are the resort’s child rate.
+                  Ages 13 and older, including 18 and older, stay listed as your children, and Coconut
+                  Bay prices them as adults. Anyone beyond the{" "}
                   {invitation.allowedChildren} included{" "}
                   {invitation.allowedChildren === 1 ? "child" : "children"} is a plus-one.
                 </p>
@@ -614,6 +666,11 @@ export function RSVPForm() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
                             Child {index + 1}
+                            {Number(child.age) >= 18
+                              ? " · 18 or older, resort adult rate"
+                              : Number(child.age) > 12
+                                ? " · Over 12, resort adult rate"
+                                : ""}
                             {plusOneTag(invitation, "child", index, adultTotal) === "included"
                               ? " · Plus-one, no charge"
                               : plusOneTag(invitation, "child", index, adultTotal) === "paid"
@@ -652,11 +709,21 @@ export function RSVPForm() {
                               <input
                                 type="number"
                                 min={0}
-                                max={17}
+                                inputMode="numeric"
                                 className={inputClass()}
                                 value={child.age}
                                 onChange={(e) => updateChild(index, { age: e.target.value })}
                               />
+                              {Number(child.age) >= 18 ? (
+                                <p className="mt-1 text-xs text-charcoal/65">
+                                  18 or older. Still counted with children over 12. Coconut Bay prices
+                                  ages 13 and older as adults.
+                                </p>
+                              ) : Number(child.age) > 12 ? (
+                                <p className="mt-1 text-xs text-charcoal/65">
+                                  Coconut Bay prices ages 13 and older as adults.
+                                </p>
+                              ) : null}
                             </div>
                           </div>
                         </div>
@@ -667,13 +734,44 @@ export function RSVPForm() {
                 <FieldError id={`${formId}-children-error`} message={errors.children} />
               </section>
 
-              <p className="rounded-sm border border-lilac/25 bg-lilac/10 px-3 py-2 text-sm text-charcoal/80">
+              <p className="rounded-sm border border-lilac/25 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/80">
                 Party total: <span className="font-semibold">{partyTotal}</span>{" "}
-                {partyTotal === 1 ? "guest" : "guests"} ({adultTotal}{" "}
-                {adultTotal === 1 ? "adult" : "adults"}, {childTotal}{" "}
-                {childTotal === 1 ? "child" : "children"}). Paid plus-ones: {plusOnes.paidAdults}{" "}
-                {plusOnes.paidAdults === 1 ? "adult" : "adults"}, {plusOnes.paidChildren}{" "}
-                {plusOnes.paidChildren === 1 ? "child" : "children"}.
+                {partyTotal === 1 ? "guest" : "guests"} (
+                {[
+                  `${adultTotal} ${adultTotal === 1 ? "adult" : "adults"}`,
+                  childBands.below12 > 0
+                    ? `${childBands.below12} ${childBands.below12 === 1 ? "child" : "children"} 12 and under`
+                    : "",
+                  childBands.above12 > 0
+                    ? `${childBands.above12} ${childBands.above12 === 1 ? "child" : "children"} over 12`
+                    : "",
+                  childBands.unstated > 0
+                    ? `${childBands.unstated} ${childBands.unstated === 1 ? "child" : "children"} still need an age`
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(", ")}
+                ).
+                {plusOnes.paidAdults + plusOnes.paidChildren > 0 ? (
+                  <>
+                    {" "}
+                    Paid plus-ones:{" "}
+                    {[
+                      plusOnes.paidAdults > 0
+                        ? `${plusOnes.paidAdults} ${plusOnes.paidAdults === 1 ? "adult" : "adults"}`
+                        : "",
+                      paidChildBands.below12 > 0
+                        ? `${paidChildBands.below12} ${paidChildBands.below12 === 1 ? "child" : "children"} 12 and under`
+                        : "",
+                      paidChildBands.above12 > 0
+                        ? `${paidChildBands.above12} ${paidChildBands.above12 === 1 ? "child" : "children"} over 12 at the adult rate`
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                    .
+                  </>
+                ) : null}
               </p>
               {plusOnes.paidAdults + plusOnes.paidChildren > 0 ? (
                 <p
@@ -751,19 +849,6 @@ export function RSVPForm() {
           </button>
 
           <div aria-live="polite" className="min-h-6 text-sm">
-            {status === "success" ? (
-              <p className="text-sage-deep">
-                Thank you. Your RSVP has been received. We can’t wait to celebrate with you.
-                {notedPlusOne ? (
-                  <>
-                    {" "}
-                    Please pay for each additional guest by{" "}
-                    <span className="font-bold">{wedding.deadlines.guestPaymentDisplay}</span>, or
-                    their spot will be canceled.
-                  </>
-                ) : null}
-              </p>
-            ) : null}
             {status === "error" && submitError ? (
               <p className="text-[#8a3f3f]" role="alert">
                 {submitError}
