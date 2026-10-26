@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { cx } from "@/lib/utils";
 
 type Step = "closed" | "code" | "question" | "sent";
@@ -15,6 +15,10 @@ export function GuestQuestionCard() {
   const [question, setQuestion] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (window.location.hash === "#ask-a-question") setStep("code");
+  }, []);
 
   const onLookup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -75,7 +79,10 @@ export function GuestQuestionCard() {
   };
 
   return (
-    <section className="paper-card mt-5 border border-lilac/35 p-5 sm:p-6">
+    <section
+      id="ask-a-question"
+      className="paper-card mt-5 scroll-mt-20 border border-lilac/35 p-5 sm:p-6"
+    >
       <h2 className="display text-2xl text-lilac-deep">Have a question?</h2>
       <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
         Is there something you’d like to know? Simply send your question along with the WhatsApp number you’d like to be contacted on, and you’ll receive a response via WhatsApp. Your invitation code is required to submit a question.

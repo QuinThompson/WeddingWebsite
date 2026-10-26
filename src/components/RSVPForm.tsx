@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
 import { DetailPageShell } from "@/components/DetailPageShell";
@@ -386,23 +387,32 @@ export function RSVPForm() {
               <span className="font-semibold text-charcoal">{invitation.household}</span>.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-charcoal/85">
-              This invitation has already been used to RSVP. Each code can reply once. If you need
-              to change your answer, please reach out to us.
+              This invitation has already been used to RSVP. Each code can reply once. To change
+              your answer, send a question with your invitation code and the WhatsApp number you’d
+              like us to use. You’ll receive a response via WhatsApp.
             </p>
-            <button
-              type="button"
-              className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
-              onClick={() => {
-                setInvitation(null);
-                setAlreadyResponded(false);
-                setValues(initialState);
-                setErrors({});
-                setStatus("idle");
-                setSubmitError(null);
-              }}
-            >
-              Use a different code
-            </button>
+            <div className="mt-4 flex flex-col items-start gap-3">
+              <Link
+                href="/invite/reminders#ask-a-question"
+                className="inline-flex min-h-11 items-center justify-center rounded-sm bg-lilac-deep px-5 text-sm font-semibold uppercase tracking-[0.16em] text-paper"
+              >
+                Ask a question
+              </Link>
+              <button
+                type="button"
+                className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                onClick={() => {
+                  setInvitation(null);
+                  setAlreadyResponded(false);
+                  setValues(initialState);
+                  setErrors({});
+                  setStatus("idle");
+                  setSubmitError(null);
+                }}
+              >
+                Use a different code
+              </button>
+            </div>
           </div>
         </div>
       </DetailPageShell>
@@ -666,11 +676,6 @@ export function RSVPForm() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
                             Child {index + 1}
-                            {Number(child.age) >= 18
-                              ? " · 18 or older, resort adult rate"
-                              : Number(child.age) > 12
-                                ? " · Over 12, resort adult rate"
-                                : ""}
                             {plusOneTag(invitation, "child", index, adultTotal) === "included"
                               ? " · Plus-one, no charge"
                               : plusOneTag(invitation, "child", index, adultTotal) === "paid"
@@ -714,12 +719,7 @@ export function RSVPForm() {
                                 value={child.age}
                                 onChange={(e) => updateChild(index, { age: e.target.value })}
                               />
-                              {Number(child.age) >= 18 ? (
-                                <p className="mt-1 text-xs text-charcoal/65">
-                                  18 or older. Still counted with children over 12. Coconut Bay prices
-                                  ages 13 and older as adults.
-                                </p>
-                              ) : Number(child.age) > 12 ? (
+                              {Number(child.age) > 12 ? (
                                 <p className="mt-1 text-xs text-charcoal/65">
                                   Coconut Bay prices ages 13 and older as adults.
                                 </p>
