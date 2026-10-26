@@ -415,7 +415,7 @@ export const wedding = {
     {
       id: "rsvp",
       title: "Wedding RSVP Deadline",
-      body: "Please confirm your attendance by December 31, 2026 so we can finalize seating, meals. RSVP only for guests named on your invitation.",
+      body: "Please confirm your attendance by December 31, 2026 so we can finalize seating, catering and other arrangements. RSVP only for guests named on your invitation.",
     },
     {
       id: "plus-one",

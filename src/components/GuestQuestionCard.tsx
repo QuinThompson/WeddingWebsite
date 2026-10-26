@@ -97,7 +97,7 @@ export function GuestQuestionCard() {
             setStep("code");
           }}
         >
-          Have a question?
+          Submit a question
         </button>
       ) : null}
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Dashboard } from "@/components/Dashboard";
 import {
   clearDashboardScroll,
+  consumeDashboardTop,
   consumeFromDetail,
   consumeOpeningTransition,
   restoreDashboardScroll,
@@ -24,8 +25,21 @@ export function DashboardPage() {
 
   useEffect(() => {
     const id = window.setTimeout(() => {
+      const pinTop = consumeDashboardTop();
       const fromDetail = consumeFromDetail();
       const fromOpening = consumeOpeningTransition();
+
+      if (pinTop) {
+        clearDashboardScroll();
+        window.scrollTo(0, 0);
+        setEntrance({
+          ready: true,
+          shortened: fromDetail,
+          fromOpening: false,
+          restoreScroll: false,
+        });
+        return;
+      }
 
       if (fromDetail) {
         setEntrance({
@@ -49,6 +63,12 @@ export function DashboardPage() {
 
     return () => window.clearTimeout(id);
   }, []);
+
+  useEffect(() => {
+    if (!entrance.ready || entrance.restoreScroll) return;
+    const id = window.setTimeout(() => window.scrollTo(0, 0), 50);
+    return () => window.clearTimeout(id);
+  }, [entrance.ready, entrance.restoreScroll]);
 
   useEffect(() => {
     if (!entrance.ready || !entrance.restoreScroll) return;

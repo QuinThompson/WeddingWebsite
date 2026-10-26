@@ -3,6 +3,7 @@ const KEYS = {
   fromDetail: "wedding-from-detail",
   dashboardScroll: "wedding-dashboard-scroll",
   rsvpNotice: "wedding-rsvp-notice",
+  dashboardTop: "wedding-dashboard-top",
 } as const;
 
 export type RsvpNotice = "received" | "paid";
@@ -63,4 +64,16 @@ export function restoreDashboardScroll() {
 
 export function clearDashboardScroll() {
   sessionStorage.removeItem(KEYS.dashboardScroll);
+}
+
+/** After RSVP, open the dashboard at the top instead of the saved scroll position. */
+export function markDashboardTop() {
+  clearDashboardScroll();
+  sessionStorage.setItem(KEYS.dashboardTop, "1");
+}
+
+export function consumeDashboardTop() {
+  const value = sessionStorage.getItem(KEYS.dashboardTop) === "1";
+  if (value) sessionStorage.removeItem(KEYS.dashboardTop);
+  return value;
 }

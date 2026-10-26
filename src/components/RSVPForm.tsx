@@ -17,7 +17,7 @@ import {
   type RsvpChildGuest,
   type RsvpPayload,
 } from "@/lib/rsvp";
-import { markRsvpSubmitted } from "@/lib/session";
+import { markDashboardTop, markRsvpSubmitted } from "@/lib/session";
 import { saveRsvp } from "@/lib/store";
 import { cx } from "@/lib/utils";
 
@@ -254,8 +254,9 @@ export function RSVPForm() {
 
   useEffect(() => {
     if (status !== "success") return;
-    const delay = reducedMotion ? 900 : 2600;
+    const delay = reducedMotion ? 7000 : 7000;
     const id = window.setTimeout(() => {
+      markDashboardTop();
       router.push("/invite");
     }, delay);
     return () => window.clearTimeout(id);
@@ -352,8 +353,8 @@ export function RSVPForm() {
   if (status === "success") {
     return (
       <DetailPageShell title="RSVP" eyebrow="Confirm Attendance">
-        <div className="paper-card relative overflow-hidden border border-lilac/35 p-5 sm:p-6" role="status">
-          <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-lilac/25" aria-hidden />
+        <div className="paper-card relative overflow-hidden border border-green/35 p-5 sm:p-6" role="status">
+          <div className="absolute inset-y-0 left-0 w-3 ticket-perforation bg-green/25" aria-hidden />
           <div className="pl-3">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
               RSVP received
@@ -658,9 +659,7 @@ export function RSVPForm() {
                   </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
-                  Add each child with a name and age. Ages 12 and under are the resort’s child rate.
-                  Ages 13 and older, including 18 and older, stay listed as your children, and Coconut
-                  Bay prices them as adults. Anyone beyond the{" "}
+                  Anyone beyond the{" "}
                   {invitation.allowedChildren} included{" "}
                   {invitation.allowedChildren === 1 ? "child" : "children"} is a plus-one.
                 </p>

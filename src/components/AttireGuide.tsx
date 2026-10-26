@@ -35,7 +35,7 @@ export function AttireGuide() {
       </ScrollReveal>
 
       <ScrollReveal className="mt-10">
-        <h3 className="display text-2xl">Colors to Avoid</h3>
+        <h3 className="display text-2xl">Colors Prohibited</h3>
         <div className="mt-5 flex flex-wrap gap-5">
           {attire.avoidColors.map((color) => (
             <Swatch key={color.name} name={color.name} hex={color.hex} />

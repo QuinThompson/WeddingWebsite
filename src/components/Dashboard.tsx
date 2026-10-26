@@ -70,15 +70,15 @@ export function Dashboard({ shortened = false, fromOpening = false }: DashboardP
         {rsvpNotice ? (
           <div
             role="status"
-            className="relative z-40 mb-4 rounded-sm border border-lilac/35 bg-lilac/15 px-4 py-3 text-sm leading-relaxed text-charcoal/85"
+            className="relative z-40 mb-4 rounded-sm bg-[#9bae94] px-4 py-3 text-sm leading-relaxed text-paper"
           >
             <div className="flex items-start justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper">
                 RSVP received
               </p>
               <button
                 type="button"
-                className="text-xs font-semibold uppercase tracking-[0.12em] text-lilac-deep underline underline-offset-2"
+                className="text-xs font-semibold uppercase tracking-[0.12em] text-paper underline underline-offset-2"
                 onClick={() => {
                   dismissRsvpNotice();
                   setRsvpNotice(null);
