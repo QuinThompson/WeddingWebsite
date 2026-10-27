@@ -213,7 +213,7 @@ export const wedding = {
     memoriesLockedLabel: "Opens on the wedding day",
     remindersEyebrow: "Guest",
     remindersTitle: "Frequently Asked Questions",
-    remindersCta: "Click here",
+    remindersCta: "Ask here",
     registryTitle: "Gift Registry",
     registryCta: "View gifts",
     registryTagEyebrow: "Wedding",

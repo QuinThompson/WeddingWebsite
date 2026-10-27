@@ -479,11 +479,9 @@ export function RSVPForm() {
           <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
             Your invitation includes{" "}
             <span className="font-bold text-charcoal">
-              {invitation.allowedAdults} {invitation.allowedAdults === 1 ? "adult" : "adults"}
-            </span>{" "}
-            (including yourself) and{" "}
-            <span className="font-bold text-charcoal">
-              {invitation.allowedChildren} {invitation.allowedChildren === 1 ? "child" : "children"}
+              {invitation.allowedAdults} {invitation.allowedAdults === 1 ? "adult" : "adults"}{" "}
+              (including yourself) and {invitation.allowedChildren}{" "}
+              {invitation.allowedChildren === 1 ? "child" : "children"}
             </span>
             .{" "}
             {invitation.plusOneAllowed
@@ -620,9 +618,15 @@ export function RSVPForm() {
                     {addAdultLabel(nextAdultTag, invitation.allowedAdults, values.adults.length)}
                   </button>
                 </div>
-                <p className="text-xs text-charcoal/65">
-                  Other adults named on this invitation, not including yourself. Anyone beyond the{" "}
-                  <span className="font-bold text-charcoal">{invitation.allowedAdults}</span> included{" "}
+                <p className="text-xs font-bold text-charcoal">
+                  {invitation.allowedAdults >= 2 ? (
+                    <>
+                      RSVP for the{" "}
+                      {invitation.allowedAdults === 2 ? "second adult" : "other adults"} named on this
+                      invitation.{" "}
+                    </>
+                  ) : null}
+                  Anyone beyond the {invitation.allowedAdults} included{" "}
                   {invitation.allowedAdults === 1 ? "adult" : "adults"} is a plus-one.
                 </p>
                 {values.adults.length === 0 ? (
@@ -636,7 +640,7 @@ export function RSVPForm() {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
-                            Adult {index + 2}
+                            {ordinal(index + 2)} Adult
                             {plusOneTag(invitation, "adult", index, adultTotal) === "included"
                               ? " · Plus-one, no charge"
                               : plusOneTag(invitation, "adult", index, adultTotal) === "paid"
@@ -693,9 +697,14 @@ export function RSVPForm() {
                     {addChildLabel(nextChildTag, invitation.allowedChildren, values.children.length)}
                   </button>
                 </div>
-                <p className="text-xs text-charcoal/65">
-                  Anyone beyond the{" "}
-                  <span className="font-bold text-charcoal">{invitation.allowedChildren}</span> included{" "}
+                <p className="text-xs font-bold text-charcoal">
+                  {invitation.allowedChildren >= 1 ? (
+                    <>
+                      RSVP for the {invitation.allowedChildren === 1 ? "child" : "children"} named on this
+                      invitation.{" "}
+                    </>
+                  ) : null}
+                  Anyone beyond the {invitation.allowedChildren} included{" "}
                   {invitation.allowedChildren === 1 ? "child" : "children"} is a plus-one.
                 </p>
                 {values.children.length === 0 ? (
@@ -709,7 +718,7 @@ export function RSVPForm() {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-taupe">
-                            Child {index + 1}
+                            {ordinal(index + 1)} Child
                             {plusOneTag(invitation, "child", index, adultTotal) === "included"
                               ? " · Plus-one, no charge"
                               : plusOneTag(invitation, "child", index, adultTotal) === "paid"
