@@ -134,6 +134,7 @@ export function GuestQuestionCard() {
           {household ? (
             <p className="text-sm text-charcoal/75">
               This invitation is for <span className="font-semibold text-charcoal">{household}</span>.
+              Please rsvp for each guest on your invitation.
             </p>
           ) : null}
           <div>

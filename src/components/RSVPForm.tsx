@@ -54,6 +54,44 @@ function firstListedName(household: string) {
   return name;
 }
 
+function ordinal(n: number) {
+  const ones = n % 10;
+  const tens = n % 100;
+  if (tens >= 11 && tens <= 13) return `${n}th`;
+  if (ones === 1) return `${n}st`;
+  if (ones === 2) return `${n}nd`;
+  if (ones === 3) return `${n}rd`;
+  return `${n}th`;
+}
+
+function addAdultLabel(
+  tag: "" | "included" | "paid",
+  allowedAdults: number,
+  adultsAdded: number,
+) {
+  if (tag === "included") return "+ Add included plus-one";
+  if (tag === "paid") return "+ Add paid plus-one";
+  const nextNumber = adultsAdded + 2;
+  if (allowedAdults >= 2 && nextNumber <= allowedAdults) {
+    return `+ Add ${ordinal(nextNumber)} adult`;
+  }
+  return "+ Add adult";
+}
+
+function addChildLabel(
+  tag: "" | "included" | "paid",
+  allowedChildren: number,
+  childrenAdded: number,
+) {
+  if (tag === "included") return "+ Add included plus-one";
+  if (tag === "paid") return "+ Add paid plus-one";
+  const nextNumber = childrenAdded + 1;
+  if (allowedChildren >= 1 && nextNumber <= allowedChildren) {
+    return `+ Add ${ordinal(nextNumber)} child`;
+  }
+  return "+ Add child";
+}
+
 const initialState: FormState = {
   fullName: "",
   email: "",
@@ -439,15 +477,20 @@ export function RSVPForm() {
             <span className="font-semibold text-charcoal">{invitation.household}</span>.
           </p>
           <p className="mt-3 rounded-sm border border-lilac/30 bg-lilac/10 px-3 py-2 text-sm leading-relaxed text-charcoal/85">
-            Your invitation includes {invitation.allowedAdults}{" "}
-            {invitation.allowedAdults === 1 ? "adult" : "adults"} (including yourself) and{" "}
-            {invitation.allowedChildren}{" "}
-            {invitation.allowedChildren === 1 ? "child" : "children"}.{" "}
+            Your invitation includes{" "}
+            <span className="font-bold text-charcoal">
+              {invitation.allowedAdults} {invitation.allowedAdults === 1 ? "adult" : "adults"}
+            </span>{" "}
+            (including yourself) and{" "}
+            <span className="font-bold text-charcoal">
+              {invitation.allowedChildren} {invitation.allowedChildren === 1 ? "child" : "children"}
+            </span>
+            .{" "}
             {invitation.plusOneAllowed
               ? "A plus-one is included, and that guest is at no charge. Any further guest is welcome if you cover the guest fee."
               : "A plus-one is not included. You may still add one if you are willing to cover the guest fee."}{" "}
             About US$175 for an adult and about US$51 for a child ages 4–12 (resort service charge and VAT
-            included). Price is subject to change. Any guest payment is due by{" "}
+            included). Price is subject to change. Any additional guest payment is due by{" "}
             <span className="font-bold text-charcoal">{wedding.deadlines.guestPaymentDisplay}</span>. If
             payment is not received by that date, their spot will be canceled.
           </p>
@@ -562,7 +605,7 @@ export function RSVPForm() {
               <section className="space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lilac-deep">
-                    Additional adults
+                    Adults
                   </h2>
                   <button
                     type="button"
@@ -574,20 +617,16 @@ export function RSVPForm() {
                       }))
                     }
                   >
-                    {nextAdultTag === "included"
-                      ? "+ Add included plus-one"
-                      : nextAdultTag === "paid"
-                        ? "+ Add paid plus-one"
-                        : "+ Add adult"}
+                    {addAdultLabel(nextAdultTag, invitation.allowedAdults, values.adults.length)}
                   </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
-                  Other adults on this invitation, not including yourself. Anyone beyond the{" "}
-                  {invitation.allowedAdults} included {invitation.allowedAdults === 1 ? "adult" : "adults"} is
-                  a plus-one.
+                  Other adults named on this invitation, not including yourself. Anyone beyond the{" "}
+                  <span className="font-bold text-charcoal">{invitation.allowedAdults}</span> included{" "}
+                  {invitation.allowedAdults === 1 ? "adult" : "adults"} is a plus-one.
                 </p>
                 {values.adults.length === 0 ? (
-                  <p className="text-sm text-taupe">No additional adults added.</p>
+                  <p className="text-sm text-taupe">No other adults added yet.</p>
                 ) : (
                   <ul className="space-y-4">
                     {values.adults.map((adult, index) => (
@@ -651,16 +690,12 @@ export function RSVPForm() {
                       }))
                     }
                   >
-                    {nextChildTag === "included"
-                      ? "+ Add included plus-one"
-                      : nextChildTag === "paid"
-                        ? "+ Add paid plus-one"
-                        : "+ Add child"}
+                    {addChildLabel(nextChildTag, invitation.allowedChildren, values.children.length)}
                   </button>
                 </div>
                 <p className="text-xs text-charcoal/65">
                   Anyone beyond the{" "}
-                  {invitation.allowedChildren} included{" "}
+                  <span className="font-bold text-charcoal">{invitation.allowedChildren}</span> included{" "}
                   {invitation.allowedChildren === 1 ? "child" : "children"} is a plus-one.
                 </p>
                 {values.children.length === 0 ? (
