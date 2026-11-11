@@ -121,7 +121,9 @@ export function RegistryPage() {
         <h2 className="text-sm font-semibold text-lilac-deep">{wedding.registry.noteHeading}</h2>
         <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
           {wedding.registry.noteBefore}
-          <span className="font-bold text-charcoal">{wedding.registry.noteEmphasis}</span>
+          <span className="font-bold uppercase tracking-[0.04em] text-charcoal underline underline-offset-2">
+            {wedding.registry.noteEmphasis}
+          </span>
           {wedding.registry.noteAfter}
         </p>
       </section>
