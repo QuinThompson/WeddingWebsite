@@ -119,7 +119,11 @@ export function RegistryPage() {
       <p className="text-sm leading-relaxed text-charcoal/80">{wedding.registry.intro}</p>
       <section className="paper-card mt-5 border border-taupe/30 p-4 sm:p-5">
         <h2 className="text-sm font-semibold text-lilac-deep">{wedding.registry.noteHeading}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-charcoal/80">{wedding.registry.note}</p>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
+          {wedding.registry.noteBefore}
+          <span className="font-bold text-charcoal">{wedding.registry.noteEmphasis}</span>
+          {wedding.registry.noteAfter}
+        </p>
       </section>
       <section className="paper-card mt-5 border border-lilac/35 p-4 sm:p-5">
         <h2 className="display text-2xl text-lilac-deep">{wedding.registry.donation.heading}</h2>
@@ -228,10 +232,24 @@ export function RegistryPage() {
                     key={item.id}
                     className="rounded-sm border border-taupe/25 bg-[#f3f0ea] p-4 opacity-70 grayscale"
                   >
-                    <h3 className="display text-xl text-charcoal line-through decoration-taupe/60">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-sm text-charcoal/80">Claimed</p>
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="display text-xl text-charcoal line-through decoration-taupe/60">
+                          {item.title}
+                        </h3>
+                        <p className="mt-2 text-sm text-charcoal/80">Claimed</p>
+                      </div>
+                      {item.storeUrl ? (
+                        <a
+                          href={item.storeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-10 items-center text-sm font-medium text-lilac-deep underline underline-offset-2 grayscale-0"
+                        >
+                          Open link
+                        </a>
+                      ) : null}
+                    </div>
                   </li>
                 ))}
               </ul>

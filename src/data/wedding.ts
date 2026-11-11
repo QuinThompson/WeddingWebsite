@@ -169,7 +169,11 @@ export const wedding = {
     intro:
       "Here are a few items we would love for our home. Claim an item so we know it’s covered, or if you prefer, a monetary gift is just as welcome.",
     noteHeading: "A little note",
-    note: "We’ve carefully chosen each item to match our home and personal style, so we kindly ask that gifts purchased be the exact items, colour and amount listed. Thank you for helping us turn our house into a home filled with love, warmth, and beautiful memories!",
+    noteBefore:
+      "We’ve carefully chosen each item to match our home and personal style, so we kindly ask that ",
+    noteEmphasis: "gifts purchased be the exact items, colour and amount listed",
+    noteAfter:
+      ". Thank you for helping us turn our house into a home filled with love, warmth, and beautiful memories!",
     donation: {
       heading: "A Gift From the Heart",
       note: "Should you wish to give a monetary gift, our banking details are provided below.",
